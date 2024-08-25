@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AddBalanceButton from './AddBalanceButton';
 
 export const Balance = () => {
   const [balance, setBalance] = useState(null);
@@ -22,10 +23,15 @@ export const Balance = () => {
   }, []);
 
   return (
-    <div className="flex">
-      <div className="font-bold text-lg">YOUR BALANCE</div>
-      <div className="font-semibold ml-4 text-lg">
-        {balance !== null ? `RS ${balance}` : 'Loading...'}
+    <div className="flex items-center justify-between">
+      <div className="flex items-center">
+        <div className="font-bold text-lg">YOUR BALANCE</div>
+        <div className="font-semibold ml-4 text-lg">
+          {balance !== null ? `RS ${balance}` : 'Loading...'}
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <AddBalanceButton />
       </div>
     </div>
   );

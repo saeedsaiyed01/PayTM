@@ -1,12 +1,16 @@
-// backend/index.js
-const express = require("express");
+const express = require('express');
+const captchaRouter = require('./captcha');
 const userRouter = require('./user');
 const accountRouter = require('./account');
 const router = express.Router();
 
 
-router.use("/user" , userRouter)
+
+
+
+// Routes
+router.use("/captcha", captchaRouter);
+router.use("/user", userRouter);
 router.use("/account",accountRouter)
 
-
-module.exports = router; 
+module.exports = router;

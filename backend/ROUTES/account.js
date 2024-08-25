@@ -15,31 +15,7 @@ router.get("/balance", authMiddleware, async (req, res) => {
         balance: account.balance
     })
 });
-router.post('/addBalance', authMiddleware, async (req, res) => {
-    try {
-        // Validate and parse the request body
-        const { amount } = req.body;
-        if (!amount || isNaN(amount) || amount <= 0) {
-            return res.status(400).json({ error: 'Invalid amount' });
-        }
 
-        // Find the account for the authenticated user
-        const account = await Account.findOne({ userId: req.userId });
-        if (!account) {
-            return res.status(404).json({ error: 'Account not found' });
-        }
-
-        // Update the balance
-        account.balance += amount;
-        await account.save();
-
-        // Respond with the updated balance
-        res.json({ balance: account.balance });
-    } catch (error) {
-        console.error('Error adding balance:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 router.post("/transfer", authMiddleware, async (req, res) => {
     const session = await mongoose.startSession();
 
