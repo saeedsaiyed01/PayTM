@@ -20,7 +20,7 @@ export const Users = () => {
         // Fetch logged-in user's info
         const fetchLoggedInUser = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/v1/user/me", {
+                const response = await axios.get("https://paytmkaro-01.onrender.com/api/v1/user/me", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setLoggedInUserId(response.data._id);
@@ -32,7 +32,7 @@ export const Users = () => {
         // Fetch users and filter out the logged-in user
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${filter}`, {
+                const response = await axios.get(`https://paytmkaro-01.onrender.com/api/v1/user/bulk?filter=${filter}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
