@@ -2,21 +2,11 @@ const express = require('express');
 const svgCaptcha = require('svg-captcha');
 const router = express.Router();
 
-// Middleware to ensure the session is initialized
-router.use((req, res, next) => {
-    if (!req.session) {
-        console.error('Session is not initialized');
-        return res.status(500).json({ message: 'Session is not initialized' });
-    }
-    next();
-});
-
 // Route to generate CAPTCHA
 router.get('/captcha', (req, res) => {
     try {
         console.log('CAPTCHA route accessed');
-
-        // Generate CAPTCHA
+        
         const captcha = svgCaptcha.create({
             size: 6, // Number of characters
             ignoreChars: '0o1l', // Characters to ignore
@@ -24,7 +14,7 @@ router.get('/captcha', (req, res) => {
             height: 40, // Height of the image
             fontSize: 50, // Font size
             noise: 3, // Amount of noise
-            color: true, // Whether the text is colored
+            color: true // Whether the text is colored
         });
 
         // Store the CAPTCHA text in the session
