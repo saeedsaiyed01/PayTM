@@ -16,19 +16,19 @@ app.use(cors({
     origin: 'https://66cc6cbe57638b3fd7a0e86a--payytmmkaroo.netlify.app', // Your deployed frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
+
+// Set up session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL, // Your MongoDB connection string
-        ttl: 14 * 24 * 60 * 60 // Session expires after 14 days
     }),
     cookie: { 
         secure: process.env.NODE_ENV === 'production', // Set secure based on environment
         sameSite: 'none', 
         httpOnly: true, // Prevent JavaScript from accessing the cookie
-        maxAge: 14 * 24 * 60 * 60 * 1000 // Optional: Set cookie max age (14 days)
     },
 }));
 
