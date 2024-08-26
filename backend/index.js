@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure CORS
 app.use(cors({
-    origin: 'https://66cc665ff37b550008bef780--payytmmkaroo.netlify.app/', // Your deployed frontend URL
+    origin: 'https://66cc6cbe57638b3fd7a0e86a--payytmmkaroo.netlify.app', // Your deployed frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
