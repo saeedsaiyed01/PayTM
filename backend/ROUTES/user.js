@@ -1,10 +1,10 @@
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const zod = require("zod");
 const { User, Account } = require("../db");
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../middleware");
 
 // Add Balance Route
@@ -114,7 +114,7 @@ router.post("/signup", async (req, res) => {
     });
 
     // Generate a JWT token
-    const token = jwt.sign({ userId }, JWT_SECRET);
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET);
 
     // Send the response
     res.status(201).json({
@@ -166,7 +166,7 @@ router.post('/signin', async (req, res) => {
     req.session.captcha = null; // Instead of deleting, just set it to null
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
     // If authentication is successful
     return res.status(200).json({ message: 'Sign-in successful', token });

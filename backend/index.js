@@ -24,19 +24,19 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 // Session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
-    resave: true, // Resave session even if not modified
-    saveUninitialized: true, // Save new sessions
+    resave: false, // Avoid resaving session if not modified
+    saveUninitialized: true, // Save new sessions that are not initialized
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL, // MongoDB connection string
     }),
     cookie: {
         secure: process.env.NODE_ENV === 'production', // Set secure cookies in production
         sameSite: 'none', // Allow cross-site cookies
-        httpOnly: false, // Temporarily set to false for debugging
+        httpOnly: false, // Set to false for debugging; set to true in production for security
+        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
     },
 }));
 
