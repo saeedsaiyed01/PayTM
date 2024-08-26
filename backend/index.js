@@ -1,19 +1,23 @@
+// Load environment variables
 require('dotenv').config();
+
+// Import dependencies
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
-const rootRouter = require("./ROUTES/index");
 const MongoStore = require('connect-mongo');
+const rootRouter = require("./ROUTES/index");
 
+// Initialize the Express app
 const app = express();
 
 // Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configure CORS
+// CORS configuration
 const corsOptions = {
-    origin: 'https://66cc6cbe57638b3fd7a0e86a--payytmmkaroo.netlify.app', // Your deployed frontend URL
+    origin: 'https://66cc6cbe57638b3fd7a0e86a--payytmmkaroo.netlify.app', // Deployed frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
@@ -21,38 +25,40 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
-    resave: true, // Set to true to resave session
-    saveUninitialized: true,
+    resave: true, // Resave session even if not modified
+    saveUninitialized: true, // Save new sessions
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL, // Your MongoDB connection string
+        mongoUrl: process.env.MONGO_URL, // MongoDB connection string
     }),
-    cookie: { 
-        secure: process.env.NODE_ENV === 'production', // Set secure based on environment
-        sameSite: 'none',
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Set secure cookies in production
+        sameSite: 'none', // Allow cross-site cookies
         httpOnly: false, // Temporarily set to false for debugging
     },
 }));
 
-
+// Port configuration
 const PORT = process.env.PORT || 3000;
 
-// Log session details (for debugging, can be removed later)
+// Debugging middleware to log session details
 app.use((req, res, next) => {
-    console.log('Session details:', req.session); // Debugging line, remove in production
+    console.log('Session details:', req.session); // Log session details for debugging
     next();
 });
 
 // Mount the main router
 app.use("/api/v1", rootRouter);
 
-// Error handling middleware (optional)
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error stack
     res.status(500).send('Something went wrong!'); // Generic error message
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
