@@ -19,7 +19,7 @@ export const SendMoney = () => {
     useEffect(() => {
         const fetchBalance = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/v1/account/balance', {
+                const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/account/balance', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
                     }
@@ -43,7 +43,7 @@ export const SendMoney = () => {
         setError(''); // Clear any previous errors
 
         try {
-            const response = await axios.post("http://localhost:3000/api/v1/account/transfer", {
+            const response = await axios.post("https://paytmkaro-01.onrender.com/api/v1/account/transfer", {
                 to: id,
                 amount: parseFloat(amount), // Convert to number for the request
                 pin // Include the PIN in the request

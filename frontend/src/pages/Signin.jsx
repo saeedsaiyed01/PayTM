@@ -24,7 +24,7 @@ export const Signin = () => {
 
     const fetchCaptcha = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/captcha/captcha', { withCredentials: true });
+            const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha/captcha', { withCredentials: true });
             setCaptchaImage(response.data);
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
@@ -39,7 +39,7 @@ export const Signin = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/user/signin', {
+            const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
                 username,
                 password,
                 captcha,

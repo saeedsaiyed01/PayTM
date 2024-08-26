@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure CORS
 app.use(cors({
-    origin: 'http://localhost:5173', // Your frontend URL
+    origin: 'https://66cb721c57638b50f7a0e8f8--payytmmkaroo.netlify.app', // Your deployed frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
@@ -21,9 +21,11 @@ app.use(session({
     secret: 'AADIL@0902',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Set to true for production and ensure HTTPS
+    cookie: { secure: true, sameSite: 'none' }, // Set to true for production and ensure HTTPS
 }));
+
 const PORT = process.env.PORT || 3000;
+
 // Log session details (for debugging, can be removed later)
 app.use((req, res, next) => {
     console.log('Session details:', req.session);
@@ -34,5 +36,5 @@ app.use((req, res, next) => {
 app.use("/api/v1", rootRouter);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:3000`);
+    console.log(`Server is running on port ${PORT}`);
 });
