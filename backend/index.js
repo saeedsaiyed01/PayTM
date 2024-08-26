@@ -17,21 +17,22 @@ app.use(cors({
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
-// Set up session management
-// Set up session management
+
 app.use(session({
-    secret: 'AADIL@0902', // Use environment variable for secret
-    resave: false,
-    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret, fallback to a default value
+    resave: false, // Prevent resaving session if it wasn't modified
+    saveUninitialized: true, // Save uninitialized sessions to the store
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL, // Your MongoDB connection string
     }),
     cookie: { 
-        secure: process.env.NODE_ENV === 'production', // Set secure based on environment
-        sameSite: 'none', 
-        httpOnly: false, // Temporarily set to false for debugging
+        secure: process.env.NODE_ENV === 'production', // Set secure flag for cookies in production
+        sameSite: 'none', // Allow cross-origin cookie sending
+        httpOnly: false, // Set to false for debugging; change to true in production for security
+        maxAge: 24 * 60 * 60 * 1000 // Optional: Set cookie expiration time (1 day)
     },
 }));
+
 
 const PORT = process.env.PORT || 3000;
 
