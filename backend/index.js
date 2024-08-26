@@ -18,22 +18,31 @@ app.use(cors({
 
 // Configure session middleware
 app.use(session({
-    secret: 'AADIL@0902',
+    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true, sameSite: 'none' }, // Set to true for production and ensure HTTPS
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production', // Set secure based on environment
+        sameSite: 'none' 
+    },
 }));
 
 const PORT = process.env.PORT || 3000;
 
 // Log session details (for debugging, can be removed later)
 app.use((req, res, next) => {
-    console.log('Session details:', req.session);
+    console.log('Session details:', req.session); // Debugging line, remove in production
     next();
 });
 
 // Mount the main router
 app.use("/api/v1", rootRouter);
+
+// Error handling middleware (optional)
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error stack
+    res.status(500).send('Something went wrong!'); // Generic error message
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
