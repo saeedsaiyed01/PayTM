@@ -1,4 +1,3 @@
-// Load environment variables
 require('dotenv').config();
 
 // Import dependencies
@@ -22,26 +21,23 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
 };
-
 app.use(cors(corsOptions));
+
 // Session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
     resave: false, // Avoid resaving session if not modified
-    saveUninitialized: true, // Save new sessions that are not initialized
+    saveUninitialized: false, // Do not save uninitialized sessions (improves security)
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL, // MongoDB connection string
     }),
     cookie: {
         secure: process.env.NODE_ENV === 'production', // Set secure cookies in production
         sameSite: 'none', // Allow cross-site cookies
-        httpOnly: false, // Set to false for debugging; set to true in production for security
-        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
+        httpOnly: true, // Set to true for security; prevents client-side access to cookies
+        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration to 1 day
     },
 }));
-
-// Port configuration
-const PORT = process.env.PORT || 3000;
 
 // Debugging middleware to log session details
 app.use((req, res, next) => {
@@ -59,6 +55,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
