@@ -26,6 +26,8 @@ export const Signin = () => {
         try {
             const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha/captcha', { withCredentials: true });
             setCaptchaImage(response.data);
+            // Store CAPTCHA text in localStorage or sessionStorage
+            sessionStorage.setItem('captcha', response.data.captcha); // Store the actual CAPTCHA text
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
             setCaptchaImage(null);
@@ -35,6 +37,15 @@ export const Signin = () => {
     const handleSignIn = async () => {
         if (!username || !password || !captcha) {
             setError('Please fill in all fields.');
+            return;
+        }
+
+        // Retrieve CAPTCHA from sessionStorage
+        const storedCaptcha = sessionStorage.getItem('captcha');
+
+        if (captcha !== storedCaptcha) {
+            setError('CAPTCHA is incorrect. Please try again.');
+            fetchCaptcha(); // Refresh CAPTCHA on error
             return;
         }
 
@@ -62,8 +73,8 @@ export const Signin = () => {
             <AppBar />
             <div className="bg-[rgb(33,37,41)] h-screen flex justify-center">
                 <div className="flex flex-col justify-center">
-                <div className="rounded-lg  bg-[rgb(255,255,255)] text-center p-4">
-                    <Heading label="Sign in" />
+                    <div className="rounded-lg bg-[rgb(255,255,255)] text-center p-4">
+                        <Heading label="Sign in" />
                         <SubHeading label="Enter your credentials to access your account" />
                         <InputBox
                             onChange={(e) => setUsername(e.target.value)}
@@ -95,8 +106,8 @@ export const Signin = () => {
                             />
                             {error && <p className="text-red-500">{error}</p>}
                             <div className='mt-4'>
-                            <Button onClick={handleSignIn} label="Sign in" /></div>
-
+                                <Button onClick={handleSignIn} label="Sign in" />
+                            </div>
                         </div>
                         <BottomWarning label="Don't have an account?" buttonText="Sign up" to="/signup" />
                     </div>

@@ -1,3 +1,4 @@
+// captcha.js
 const express = require('express');
 const svgCaptcha = require('svg-captcha');
 const router = express.Router();
@@ -8,22 +9,17 @@ router.get('/captcha', (req, res) => {
         console.log('CAPTCHA route accessed');
         
         const captcha = svgCaptcha.create({
-            size: 6, // Number of characters
-            ignoreChars: '0o1l', // Characters to ignore
-            width: 100, // Width of the image
-            height: 40, // Height of the image
-            fontSize: 50, // Font size
-            noise: 3, // Amount of noise
-            color: true // Whether the text is colored
+            size: 6,
+            ignoreChars: '0o1l',
+            width: 100,
+            height: 40,
+            fontSize: 50,
+            noise: 3,
+            color: true
         });
 
-        // Store the CAPTCHA text in the session
-        req.session.captcha = captcha.text;
-        console.log('Generated CAPTCHA:', req.session.captcha); // Debug log
-
-        // Set the response type to SVG and send the CAPTCHA image
-        res.type('svg');
-        res.status(200).send(captcha.data);
+        // Send CAPTCHA image and text to the client
+        res.json({ captchaImage: captcha.data, captchaText: captcha.text });
     } catch (error) {
         console.error('Error generating CAPTCHA:', error);
         res.status(500).json({ message: 'Internal server error' });
