@@ -18,6 +18,7 @@ app.use(cors({
 }));
 
 // Set up session management
+// Set up session management
 app.use(session({
     secret: 'AADIL@0902', // Use environment variable for secret
     resave: false,
@@ -28,7 +29,7 @@ app.use(session({
     cookie: { 
         secure: process.env.NODE_ENV === 'production', // Set secure based on environment
         sameSite: 'none', 
-        httpOnly: true, // Prevent JavaScript from accessing the cookie
+        httpOnly: false, // Temporarily set to false for debugging
     },
 }));
 
