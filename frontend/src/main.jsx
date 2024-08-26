@@ -4,7 +4,7 @@ import App from './App.jsx'; // Ensure App.jsx is in the same directory as index
 import './index.css'; // Ensure index.css is in the same directory as index.jsx
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+
     <App />
-  </React.StrictMode>
+
 );
