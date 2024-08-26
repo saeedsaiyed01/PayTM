@@ -12,11 +12,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configure CORS
-app.use(cors({
+const corsOptions = {
     origin: 'https://66cc6cbe57638b3fd7a0e86a--payytmmkaroo.netlify.app', // Your deployed frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-}));
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
+};
 
+app.use(cors(corsOptions));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret, fallback to a default value

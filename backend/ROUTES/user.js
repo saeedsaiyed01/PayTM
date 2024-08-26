@@ -77,7 +77,60 @@ const signupBody = zod.object({
     password: zod.string(),
     pin: zod.string().regex(/^\d{4}$/, { message: "PIN must be exactly 4 digits" })
 });
+
+router.post("/signup", async (req, res) => {
+    // Validate the request body
+    const { success, error } = signupBody.safeParse(req.body);
+    if (!success) {
+        return res.status(400).json({
+            message: "Incorrect inputs",
+            error: error.errors
+        });
+    }
+
+    // Check if the username already exists
+    const existingUser = await User.findOne({ username: req.body.username });
+    if (existingUser) {
+        return res.status(409).json({ message: "Email already taken" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(req.body.password, 13);
+
+    // Create a new user
+    const user = await User.create({
+        username: req.body.username,
+        password: hashedPassword,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        pin: req.body.pin // No hashing for the PIN
+    });
+
+    // Create an associated account
+    const userId = user._id;
+    await Account.create({
+        userId,
+        balance: 1 + Math.random() * 10000
+    });
+
+    // Generate a JWT token
+    const token = jwt.sign({ userId }, JWT_SECRET);
+
+    // Send the response
+    res.status(201).json({
+        message: "User created successfully",
+        token: token
+    });
+});
+
+const signinBody = zod.object({
+    username: zod.string().email(),
+    password: zod.string(),
+    captcha: zod.string(),
+});
+
 router.post('/signin', async (req, res) => {
+    // Validate request data
     const parsed = signinBody.safeParse(req.body);
     if (!parsed.success) {
         return res.status(400).json({
@@ -88,29 +141,36 @@ router.post('/signin', async (req, res) => {
 
     const { username, password, captcha } = req.body;
 
+    // Debug logs
+    console.log('Request body:', req.body);
     console.log('Received CAPTCHA:', captcha);
     console.log('Stored CAPTCHA in session:', req.session.captcha);
 
+    // Ensure the session is initialized and CAPTCHA exists
     if (!req.session.captcha) {
         return res.status(400).json({ message: 'CAPTCHA session has expired or is not set' });
     }
 
+    // Check if the CAPTCHA is valid
     if (captcha !== req.session.captcha) {
         return res.status(400).json({ message: 'Invalid CAPTCHA' });
     }
 
+    // Check for valid username and password
     const user = await User.findOne({ username });
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    req.session.captcha = null; // Clear CAPTCHA from session
+    // Clear the CAPTCHA from session after successful verification
+    req.session.captcha = null; // Instead of deleting, just set it to null
 
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
+    // If authentication is successful
     return res.status(200).json({ message: 'Sign-in successful', token });
 });
-
 
 
 
