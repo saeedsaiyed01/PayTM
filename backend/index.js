@@ -19,7 +19,7 @@ app.use(cors({
 
 // Set up session management
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
+    secret: 'AADIL@0902', // Use environment variable for secret
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
