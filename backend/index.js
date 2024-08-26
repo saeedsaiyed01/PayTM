@@ -22,16 +22,16 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
+    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
+    resave: true, // Set to true to resave session
     saveUninitialized: true,
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL,
+        mongoUrl: process.env.MONGO_URL, // Your MongoDB connection string
     }),
     cookie: { 
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production', // Set secure based on environment
         sameSite: 'none',
-        httpOnly: true,
+        httpOnly: false, // Temporarily set to false for debugging
     },
 }));
 
