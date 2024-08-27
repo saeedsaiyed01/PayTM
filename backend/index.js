@@ -49,7 +49,7 @@ app.use(session({
         ttl: 24 * 60 * 60 // Session expiration time in seconds (1 day here)
     }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Ensure cookies are secure in production
+        secure: true, // Ensure cookies are secure in production
         sameSite: 'none', // Allow cross-site cookies
         httpOnly: true, // Security: Prevent access to cookie from client-side scripts
         maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
