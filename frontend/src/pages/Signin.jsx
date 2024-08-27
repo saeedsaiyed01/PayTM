@@ -25,9 +25,7 @@ export const Signin = () => {
     const fetchCaptcha = async () => {
         try {
             const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha/captcha', { withCredentials: true });
-            setCaptchaImage(response.data);
-            // Store CAPTCHA text in localStorage or sessionStorage
-            sessionStorage.setItem('captcha', response.data.captcha); // Store the actual CAPTCHA text
+            setCaptchaImage(response.data); // Store the CAPTCHA SVG image data
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
             setCaptchaImage(null);
@@ -40,31 +38,30 @@ export const Signin = () => {
             return;
         }
 
-        // Retrieve CAPTCHA from sessionStorage
-        const storedCaptcha = sessionStorage.getItem('captcha');
-
-        if (captcha !== storedCaptcha) {
-            setError('CAPTCHA is incorrect. Please try again.');
-            fetchCaptcha(); // Refresh CAPTCHA on error
-            return;
-        }
-
         try {
-            const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
-                username,
-                password,
-                captcha,
-            }, { withCredentials: true }); // Ensure credentials are included
+            // Verify CAPTCHA before sign-in
+            const verificationResponse = await axios.post('https://paytmkaro-01.onrender.com/api/v1/captcha/verify-captcha', {
+                captcha
+            }, { withCredentials: true });
 
-            if (response.status === 200) {
-                localStorage.setItem('token', response.data.token); 
-                navigate('/dashboard');
+            // If CAPTCHA verification is successful, proceed with sign-in
+            if (verificationResponse.status === 200) {
+                const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
+                    username,
+                    password,
+                    captcha // Ensure CAPTCHA is included in the sign-in request body if required by your backend
+                }, { withCredentials: true });
+
+                if (response.status === 200) {
+                    localStorage.setItem('token', response.data.token); 
+                    navigate('/dashboard');
+                }
             }
         } catch (err) {
-            console.error('Sign-in error:', err); // Log detailed error
+            console.error('Error verifying CAPTCHA or signing in:', err);
             const errorMessage = err.response?.data?.message || 'Sign in failed. Please try again.';
             setError(errorMessage);
-            fetchCaptcha(); // Refresh CAPTCHA on error to encourage a new attempt
+            fetchCaptcha(); // Refresh CAPTCHA on error
         }
     };
 
