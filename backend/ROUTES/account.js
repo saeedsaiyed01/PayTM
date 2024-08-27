@@ -2,7 +2,7 @@
 const express = require('express');
 const { authMiddleware } = require('../middleware');
 const { Account } = require("../db");
-const bcrypt = require('bcrypt')
+
 const { default: mongoose } = require('mongoose');
 
 const router = express.Router();
@@ -38,8 +38,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         }
 
         // Validate the PIN
-        const isPinValid = await bcrypt.compare(pin, account.pin); // Adjust according to your PIN storage and hashing logic
-        if (!isPinValid) {
+        if (pin !== account.pin) {
             return res.status(400).json({
                 message: "Invalid PIN"
             });
