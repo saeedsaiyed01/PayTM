@@ -40,8 +40,8 @@ app.use(cors(corsOptions));
 // Session management
 app.use(session({
     secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
-    resave: false, // Avoid resaving session if not modified
-    saveUninitialized:true, // Do not save new sessions that are not initialized
+    resave: true, // Avoid resaving session if not modified
+    saveUninitialized:false, // Do not save new sessions that are not initialized
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL, // MongoDB connection string
     }),
