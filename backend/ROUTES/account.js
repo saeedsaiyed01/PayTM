@@ -2,6 +2,7 @@
 const express = require('express');
 const { authMiddleware } = require('../middleware');
 const { Account } = require("../db");
+const { User } = require("../db");
 
 const { default: mongoose } = require('mongoose');
 
@@ -16,7 +17,6 @@ router.get("/balance", authMiddleware, async (req, res) => {
         balance: account.balance
     })
 });
-
 router.post("/transfer", authMiddleware, async (req, res) => {
     const { amount, to, pin } = req.body;
 
@@ -37,8 +37,9 @@ router.post("/transfer", authMiddleware, async (req, res) => {
             });
         }
 
-        // Validate the PIN
-        if (pin !== account.pin) {
+        // Fetch user details to validate PIN
+        const user = await User.findOne({ _id: req.userId });
+        if (!user || user.pin !== pin) {
             return res.status(400).json({
                 message: "Invalid PIN"
             });
@@ -58,6 +59,5 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         });
     }
 });
-
 
 module.exports = router;
