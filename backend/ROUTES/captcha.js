@@ -52,8 +52,8 @@ router.post('/verify-captcha', (req, res) => {
     console.log('Session stored CAPTCHA:', sessionCaptcha);
 
     // Check if the CAPTCHA matches
-    if (userCaptcha !== sessionCaptcha) {
-        return res.status(400).json({ message: 'CAPTCHA is incorrect. Please try again.' });
+    if (!sessionCaptcha || userCaptcha !== sessionCaptcha) {
+        return res.status(400).json({ message: 'CAPTCHA is incorrect or session expired. Please try again.' });
     }
 
     // Clear the CAPTCHA from the session after successful verification
