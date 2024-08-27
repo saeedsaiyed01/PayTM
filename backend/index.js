@@ -15,6 +15,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// Session management
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
+    resave: false, // Avoid resaving session if not modified
+    saveUninitialized: false, // Do not save new sessions that are not initialized
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URL, // MongoDB connection string
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Set secure cookies in production
+        sameSite: 'none', // Allow cross-site cookies
+        httpOnly: true, // Security: prevent access to cookie from client-side scripts
+        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
+    },
+}));
 // CORS configuration
 const allowedOrigins = [
     'https://payytmmkaroo.netlify.app', 
@@ -36,22 +52,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Session management
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for secret
-    resave: false, // Avoid resaving session if not modified
-    saveUninitialized: false, // Do not save new sessions that are not initialized
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL, // MongoDB connection string
-    }),
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Set secure cookies in production
-        sameSite: 'none', // Allow cross-site cookies
-        httpOnly: true, // Security: prevent access to cookie from client-side scripts
-        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
-    },
-}));
 
 // Port configuration
 const PORT = process.env.PORT || 3000;
