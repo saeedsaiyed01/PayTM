@@ -42,7 +42,7 @@ export const SendMoney = () => {
 
         setError(''); // Clear any previous errors
 
-        try {
+        try {                                  
             const response = await axios.post("https://paytmkaro-01.onrender.com/api/v1/account/transfer", {
                 to: id,
                 amount: parseFloat(amount), // Convert to number for the request

@@ -16,11 +16,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
+const allowedOrigins = [
+    'https://payytmmkaroo.netlify.app', 
+    'https://66ccda677079100008701e26--payytmmkaroo.netlify.app',
+    // Include your current origin here
+];
+
 const corsOptions = {
-    origin: 'https://66ccda677079100008701e26--payytmmkaroo.netlify.app', // Deployed frontend URL
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
+    origin: function (origin, callback) {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 app.use(cors(corsOptions));
