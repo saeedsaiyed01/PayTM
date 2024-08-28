@@ -4,8 +4,6 @@ require('dotenv').config();
 // Import dependencies
 const express = require('express');
 const cors = require('cors');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
 const rootRouter = require("./ROUTES/index");
 
 // Initialize the Express app
@@ -38,23 +36,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 // Session management
-
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'AADIL@0902', // Use environment variable for the session secret
-    resave: false, // Avoid resaving session if it hasn't been modified
-    saveUninitialized: false, // Do not save new sessions that are uninitialized
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL, // Your MongoDB connection string
-        dbName: 'TEST-APP', // Correct way to specify the database name
-        ttl: 24 * 60 * 60 // Session expiration time in seconds (1 day here)
-    }),
-    cookie: {
-        secure: true, // Ensure cookies are secure in production
-        sameSite: 'none', // Allow cross-site cookies
-        httpOnly: true, // Security: Prevent access to cookie from client-side scripts
-        maxAge: 1000 * 60 * 60 * 24 // Set cookie expiration (1 day)
-    },
-}));
 
 // Port configuration
 const PORT = process.env.PORT || 3000;
