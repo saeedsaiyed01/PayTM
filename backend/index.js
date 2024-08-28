@@ -13,12 +13,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // CORS configuration
 const allowedOrigins = [
     'https://payytmmkaroo.netlify.app', 
     'https://66ccda677079100008701e26--payytmmkaroo.netlify.app',
-    'http://localhost:5173/',// Include your current origin here
+    'http://localhost:5173/' // Include your current origin here
 ];
 
 const corsOptions = {
@@ -35,16 +34,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Session management
 
 // Port configuration
 const PORT = process.env.PORT || 3000;
-
-// Debugging middleware to log session details
-app.use((req, res, next) => {
-    console.log('Session details:', req.session); // Log session details for debugging
-    next();
-});
 
 // Mount the main router
 app.use("/api/v1", rootRouter);
