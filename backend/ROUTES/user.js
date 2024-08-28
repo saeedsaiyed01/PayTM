@@ -122,102 +122,49 @@ router.post("/signup", async (req, res) => {
         token: token
     });
 });
-
 const signinBody = zod.object({
-
     username: zod.string().email(),
-
     password: zod.string(),
-
-    captcha: zod.string(),
-
+    captcha: zod.string(),  // Still include captcha in validation
 });
 
-
-
 router.post('/signin', async (req, res) => {
-
     // Validate request data
-
     const parsed = signinBody.safeParse(req.body);
-
     if (!parsed.success) {
-
         return res.status(400).json({
-
             message: "Invalid input",
-
             error: parsed.error.errors
-
         });
-
     }
-
-
 
     const { username, password, captcha } = req.body;
 
-
-
     // Debug logs
-
     console.log('Request body:', req.body);
-
     console.log('Received CAPTCHA:', captcha);
 
-    console.log('Stored CAPTCHA in session:', req.session.captcha);
+    // Check if the CAPTCHA is valid (now stored in localStorage on the frontend)
+    const storedCaptcha = req.body.captchaStored;  // Assuming you pass this from localStorage
+    console.log('Stored CAPTCHA:', storedCaptcha);
 
-
-
-    // Ensure the session is initialized and CAPTCHA exists
-
-    if (!req.session.captcha) {
-
-        return res.status(400).json({ message: 'CAPTCHA session has expired or is not set' });
-
-    }
-
-
-
-    // Check if the CAPTCHA is valid
-
-    if (captcha !== req.session.captcha) {
-
+    if (captcha !== storedCaptcha) {
         return res.status(400).json({ message: 'Invalid CAPTCHA' });
-
     }
-
-
 
     // Check for valid username and password
-
     const user = await User.findOne({ username });
-
     if (!user || !(await bcrypt.compare(password, user.password))) {
-
         return res.status(401).json({ message: 'Invalid credentials' });
-
     }
 
-
-
-    // Clear the CAPTCHA from session after successful verification
-
-    req.session.captcha = null; // Instead of deleting, just set it to null
-
-
-
     // Generate JWT token
-
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-
-
     // If authentication is successful
-
     return res.status(200).json({ message: 'Sign-in successful', token });
-
 });
+
 
 
 
