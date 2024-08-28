@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
     'https://payytmmkaroo.netlify.app', 
     'https://66ccda677079100008701e26--payytmmkaroo.netlify.app',
-    'http://localhost:5173/' // Include your current origin here
+    'http://localhost:5173/',
+    'https://66cf5cc008be6200082a3ecb--payytmmkaroo.netlify.app' // Include your current origin here
 ];
 
 const corsOptions = {
