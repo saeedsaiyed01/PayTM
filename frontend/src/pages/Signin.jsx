@@ -28,6 +28,7 @@ export const Signin = () => {
             setCaptchaImage(response.data.captchaData); // Store the CAPTCHA SVG image data
 
             // Store the CAPTCHA text in localStorage
+            console.log('Storing CAPTCHA text in localStorage:', response.data.captchaText); // Debugging
             localStorage.setItem('captchaText', response.data.captchaText);
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
@@ -43,6 +44,8 @@ export const Signin = () => {
 
         // Retrieve stored CAPTCHA from localStorage
         const storedCaptcha = localStorage.getItem('captchaText');
+        console.log('Stored CAPTCHA text from localStorage:', storedCaptcha); // Debugging
+        console.log('User-entered CAPTCHA:', captcha.trim()); // Debugging
 
         // Verify CAPTCHA
         if (captcha.trim() !== storedCaptcha) {
