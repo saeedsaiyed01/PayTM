@@ -40,7 +40,10 @@ export const Signup = () => {
     return (
         <div>
             <AppBar />
-            <div className="bg-[rgb(33,37,41)] h-screen flex justify-center">
+            <div
+ className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
+  style={{ backgroundImage: 'url(bg-signup.jpg)' }}
+>
                 <div className="flex flex-col justify-center">
                     <div className="rounded-lg  bg-[rgb(255,255,255)] text-center p-2 h-max px-4">
                         <Heading label={"Sign Up"} />

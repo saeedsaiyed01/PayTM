@@ -72,7 +72,8 @@ const AddBalancePage = () => {
     return (
         <div>
             <AppBar />
-            <div className="bg-[rgb(33,37,41)] h-screen flex justify-center">
+            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
+  style={{ backgroundImage: 'url(bg.jpg)' }}>
                 <div className="flex flex-col justify-center">
                     <div className="rounded-lg bg-[rgb(255,255,255)] text-center p-4 border border-gray-200">
                         <h2 className="text-xl font-bold mb-2 mt-5 text-black ">Add Balance</h2>

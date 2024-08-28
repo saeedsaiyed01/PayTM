@@ -70,7 +70,8 @@ export const SendMoney = () => {
     return (
         <div>
             <AppBar />
-            <div className="flex justify-center h-screen bg-[rgb(33,37,41)]">
+            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
+  style={{ backgroundImage: 'url(bg.jpg)' }}>
                 <div className="h-full flex flex-col justify-center">
                     <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-[rgb(255,255,255)] shadow-lg rounded-lg">
                         <div className="flex flex-col space-y-1.5 p-6">

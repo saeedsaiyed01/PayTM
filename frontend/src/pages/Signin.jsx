@@ -25,7 +25,10 @@ export const Signin = () => {
     const fetchCaptcha = async () => {
         try {
             const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha/captcha', { withCredentials: true });
-            setCaptchaImage(response.data); // Store the CAPTCHA SVG image data
+            setCaptchaImage(response.data.captchaData); // Store the CAPTCHA SVG image data
+
+            // Store the CAPTCHA text in localStorage
+            localStorage.setItem('captchaText', response.data.captchaText);
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
             setCaptchaImage(null);
@@ -38,39 +41,45 @@ export const Signin = () => {
             return;
         }
 
+        // Retrieve stored CAPTCHA from localStorage
+        const storedCaptcha = localStorage.getItem('captchaText');
+
+        // Verify CAPTCHA
+        if (captcha.trim() !== storedCaptcha) {
+            setError('CAPTCHA is incorrect. Please try again.');
+            fetchCaptcha(); // Refresh CAPTCHA on error
+            return;
+        }
+
         try {
-            // Verify CAPTCHA before sign-in
-            const verificationResponse = await axios.post('https://paytmkaro-01.onrender.com/api/v1/captcha/verify-captcha', {
-                captcha
+            // Proceed with sign-in
+            const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
+                username,
+                password,
             }, { withCredentials: true });
 
-            // If CAPTCHA verification is successful, proceed with sign-in
-            if (verificationResponse.status === 200) {
-                const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
-                    username,
-                    password,
-                    captcha // Ensure CAPTCHA is included in the sign-in request body if required by your backend
-                }, { withCredentials: true });
-
-                if (response.status === 200) {
-                    localStorage.setItem('token', response.data.token); 
-                    navigate('/dashboard');
-                }
+            if (response.status === 200) {
+                localStorage.setItem('token', response.data.token); 
+                navigate('/dashboard');
             }
         } catch (err) {
-            console.error('Error verifying CAPTCHA or signing in:', err);
+            console.error('Error signing in:', err);
             const errorMessage = err.response?.data?.message || 'Sign in failed. Please try again.';
             setError(errorMessage);
             fetchCaptcha(); // Refresh CAPTCHA on error
+        } finally {
+            // Clear CAPTCHA from localStorage after sign-in attempt
+            localStorage.removeItem('captchaText');
         }
     };
 
     return (
         <div>
             <AppBar />
-            <div className="bg-[rgb(33,37,41)] h-screen flex justify-center">
+            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
+                style={{ backgroundImage: 'url(bg.jpg)' }}>
                 <div className="flex flex-col justify-center">
-                    <div className="rounded-lg bg-[rgb(255,255,255)] text-center p-4">
+                    <div className="rounded-lg bg-[rgb(255,255,255)] text-center p-4 mt-5 ">
                         <Heading label="Sign in" />
                         <SubHeading label="Enter your credentials to access your account" />
                         <InputBox
