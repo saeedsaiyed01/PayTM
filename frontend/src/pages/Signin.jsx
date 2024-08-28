@@ -41,26 +41,28 @@ export const Signin = () => {
             setError('Please fill in all fields.');
             return;
         }
-
+    
         // Retrieve stored CAPTCHA from localStorage
         const storedCaptcha = localStorage.getItem('captchaText');
         console.log('Stored CAPTCHA text from localStorage:', storedCaptcha); // Debugging
         console.log('User-entered CAPTCHA:', captcha.trim()); // Debugging
-
+    
         // Verify CAPTCHA
         if (captcha.trim() !== storedCaptcha) {
             setError('CAPTCHA is incorrect. Please try again.');
             fetchCaptcha(); // Refresh CAPTCHA on error
             return;
         }
-
+    
         try {
-            // Proceed with sign-in
+            // Proceed with sign-in and send stored CAPTCHA along with the user input
             const response = await axios.post('https://paytmkaro-01.onrender.com/api/v1/user/signin', {
                 username,
                 password,
+                captcha,  // User input
+                captchaStored: storedCaptcha,  // Stored CAPTCHA from localStorage
             }, { withCredentials: true });
-
+    
             if (response.status === 200) {
                 localStorage.setItem('token', response.data.token); 
                 navigate('/dashboard');
@@ -75,7 +77,7 @@ export const Signin = () => {
             localStorage.removeItem('captchaText');
         }
     };
-
+    
     return (
         <div>
             <AppBar />
