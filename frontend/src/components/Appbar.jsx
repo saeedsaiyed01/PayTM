@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 export const AppBar = () => {
     const [username, setUsername] = useState("");
+    const [lastName, setlastName] = useState("");
 
     useEffect(() => {
         const fetchName = async () => {
@@ -13,6 +14,7 @@ export const AppBar = () => {
                     }
                 });
                 setUsername(response.data.firstName);
+                setlastName(response.data.lastName);
             } catch (error) {
                 console.error('Error fetching name:', error);
             }
@@ -33,6 +35,7 @@ export const AppBar = () => {
                 <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mt-1 mr-2">
                     <div className="text-xl font-semibold">
                         {username ? username.charAt(0).toUpperCase() : 'U'}
+                        {lastName ? lastName.charAt(0).toUpperCase() :""}
                     </div>
                 </div>
             </div>
