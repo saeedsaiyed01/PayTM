@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const AddBalanceButton = () => {
+const AddBalanceButton = () => {!~
     const navigate = useNavigate();
 
     const handleNavigate = () => {

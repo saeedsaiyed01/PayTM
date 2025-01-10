@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+
 
 const CaptchaComponent = () => {
     const [captchaImage, setCaptchaImage] = useState('');
@@ -9,7 +11,7 @@ const CaptchaComponent = () => {
         // Fetch the CAPTCHA from the server
         const fetchCaptcha = async () => {
             try {
-                const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha');
+                const response = await axios.get('localhost:5173/api/v1/captcha');
                 setCaptchaImage(response.data.captchaImage);
                 setCaptchaText(response.data.captchaText);
 

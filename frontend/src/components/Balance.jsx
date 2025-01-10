@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import AddBalanceButton from './AddBalanceButton';
 
 export const Balance = () => {
@@ -8,7 +8,7 @@ export const Balance = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/account/balance', {
+        const response = await axios.get("http://localhost:3000/api/v1/account/balance", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
           }

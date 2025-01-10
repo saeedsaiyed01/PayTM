@@ -1,10 +1,12 @@
-import { useSearchParams } from 'react-router-dom';
 import axios from "axios";
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { AppBar } from '../components/Appbar';
 import { BottomWarning } from '../components/BottomWar';
 import PinInput from '../components/PinInput'; // Import PinInput component
-import { AppBar } from '../components/Appbar';
-import { Balance } from '../components/Balance'; // Import the Balance component
+
+
+const API_URL = "http://localhost:3000";
 
 export const SendMoney = () => {
     const [searchParams] = useSearchParams();
@@ -19,7 +21,7 @@ export const SendMoney = () => {
     useEffect(() => {
         const fetchBalance = async () => {
             try {
-                const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/account/balance', {
+                const response = await axios.get(`${API_URL}/api/v1/account/balance`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
                     }
@@ -42,8 +44,8 @@ export const SendMoney = () => {
 
         setError(''); // Clear any previous errors
 
-        try {                                  
-            const response = await axios.post("https://paytmkaro-01.onrender.com/api/v1/account/transfer", {
+        try {
+            const response = await axios.post(`${API_URL}/api/v1/account/transfer`, {
                 to: id,
                 amount: parseFloat(amount), // Convert to number for the request
                 pin // Include the PIN in the request

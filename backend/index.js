@@ -14,26 +14,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
-const allowedOrigins = [
-    'https://payytmmkaroo.netlify.app', 
-    'https://66ccda677079100008701e26--payytmmkaroo.netlify.app',
-    'http://localhost:5173/',
-    'https://66cf5cc008be6200082a3ecb--payytmmkaroo.netlify.app' // Include your current origin here
-];
-
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: 'http://localhost:5173', // Adjust this to your frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Ensure OPTIONS is included
     allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
+  };
+  
+  app.use(cors(corsOptions));
+  
 app.use(cors(corsOptions));
 
 // Port configuration
@@ -41,7 +29,10 @@ const PORT = process.env.PORT || 3000;
 
 // Mount the main router
 app.use("/api/v1", rootRouter);
-
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+~  
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error stack

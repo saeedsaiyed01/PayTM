@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import PinInput from '../components/PinInput';
+import React, { useEffect, useState } from 'react';
 import { AppBar } from '../components/Appbar';
-import { InputBox } from '../components/InputBox';
 import { BottomWarning } from '../components/BottomWar';
+import { InputBox } from '../components/InputBox';
+import PinInput from '../components/PinInput';
 
 const AddBalancePage = () => {
     const [amount, setAmount] = useState('');
@@ -14,31 +14,34 @@ const AddBalancePage = () => {
     useEffect(() => {
         const fetchBalance = async () => {
             try {
-                const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/account/balance', {
+                const response = await axios.get("http://localhost:3000/v1/account/balance", {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
+                    
                     }
+                        
+
                 });
                 setBalance(response.data.balance);
             } catch (error) {
                 console.error('Error fetching balance:', error);
             }
         };
-
+        console.log(localStorage.getItem('token')); // Check if the token is stored
         fetchBalance();
     }, []);
 
     const handlePinSubmit = async (pin) => {
         const parsedAmount = parseFloat(amount);
-
+    
         if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
             setError('Please enter a valid amount.');
             return;
         }
-
+    
         try {
             const response = await axios.post(
-                'https://paytmkaro-01.onrender.com/api/v1/user/addBalance',
+                "http://localhost:3000/api/v1/user/addBalance",
                 { amount: parsedAmount, pin },
                 {
                     headers: {
@@ -47,18 +50,12 @@ const AddBalancePage = () => {
                     }
                 }
             );
-
+    
             if (response.status === 200) {
                 const { newBalance } = response.data;
-
-                // Play sound on successful response
-                const audio = new Audio('/sounds/payment-successfull-audio.mp3');
-                audio.play().catch(e => {
-                    console.error('Audio play error:', e);
-                });
-
+    
                 setBalance(parseFloat(newBalance));
-                setIsPaymentSuccessful(true); // Set payment success state to true
+                setIsPaymentSuccessful(true);
                 setError('');
             } else {
                 setError('Error adding balance, please try again.');
@@ -68,7 +65,7 @@ const AddBalancePage = () => {
             setError('Error adding balance, please try again.');
         }
     };
-
+    
     return (
         <div>
             <AppBar />

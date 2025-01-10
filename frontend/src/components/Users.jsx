@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { Button } from "./Button";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./Button";
+
+const API_URL = "http://localhost:3000";
 
 export const Users = () => {
     const [users, setUsers] = useState([]);
@@ -17,39 +19,30 @@ export const Users = () => {
             return;
         }
 
-        // Fetch logged-in user's info
-        const fetchLoggedInUser = async () => {
+        const fetchLoggedInUserAndUsers = async () => {
             try {
-                const response = await axios.get("https://paytmkaro-01.onrender.com/api/v1/user/me", {
+                const userResponse = await axios.get(`${API_URL}/api/v1/user/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setLoggedInUserId(response.data._id);
-            } catch (error) {
-                console.error("Failed to fetch user info:", error);
-            }
-        };
+                const currentUserId = userResponse.data._id;
+                setLoggedInUserId(currentUserId);
 
-        // Fetch users and filter out the logged-in user
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get(`https://paytmkaro-01.onrender.com/api/v1/user/bulk?filter=${filter}`, {
+                const usersResponse = await axios.get(`${API_URL}/api/v1/user/bulk?filter=${filter}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                if (response.data.users) {
-                    const currentUserId = response.data.currentUserId || loggedInUserId;
-                    setUsers(response.data.users.filter(user => user._id !== currentUserId));
+                if (usersResponse.data.users) {
+                    setUsers(usersResponse.data.users.filter(user => user._id !== currentUserId));
                 } else {
                     console.error("No users found in the response");
                 }
             } catch (error) {
-                console.error("Failed to fetch users:", error);
+                console.error("Error fetching data:", error);
             }
         };
 
-        fetchLoggedInUser();
-        fetchUsers();
-    }, [filter, loggedInUserId]);
+        fetchLoggedInUserAndUsers();
+    }, [filter]);
 
     return (
         <>
@@ -96,3 +89,4 @@ function User({ user }) {
         </div>
     );
 }
+ 
