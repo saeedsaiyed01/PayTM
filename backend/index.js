@@ -1,10 +1,11 @@
 // Load environment variables
 require('dotenv').config();
+const svgCaptcha = require('svg-captcha');
 
 // Import dependencies
 const express = require('express');
 const cors = require('cors');
-const rootRouter = require("./ROUTES/index");
+const rootRouter = require('./ROUTES/index');
 
 // Initialize the Express app
 const app = express();
@@ -14,25 +15,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
+const allowedOrigins = [
+    'http://localhost:5173','http://localhost:5174' // Your frontend local origin
+    // Add more origins as needed
+];
+
 const corsOptions = {
-    origin: 'http://localhost:5173', // Adjust this to your frontend origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Ensure OPTIONS is included
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, Postman)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-  };
-  
-  app.use(cors(corsOptions));
-  
+};
+
 app.use(cors(corsOptions));
 
 // Port configuration
 const PORT = process.env.PORT || 3000;
 
 // Mount the main router
-app.use("/api/v1", rootRouter);
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-  });
-~  
+app.use('/api/v1', rootRouter);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error stack

@@ -9,6 +9,8 @@ import { InputBox } from '../components/InputBox';
 import InputBoxPass from '../components/InputBoxPass';
 import { SubHeading } from '../components/SubHeading';
 
+
+
 export const Signin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -24,11 +26,10 @@ export const Signin = () => {
 
     const fetchCaptcha = async () => {
         try {
-            const response = await axios.get('https://paytmkaro-01.onrender.com/api/v1/captcha/captcha', { withCredentials: true });
+            const response = await axios.get("http://localhost:3000/api/v1/captcha/captcha", { withCredentials: true });
             setCaptchaImage(response.data.captchaData); // Store the CAPTCHA SVG image data
 
             // Store the CAPTCHA text in localStorage
-            console.log('Storing CAPTCHA text in localStorage:', response.data.captchaText); // Debugging
             localStorage.setItem('captchaText', response.data.captchaText);
         } catch (err) {
             console.error('Failed to load CAPTCHA', err);
@@ -41,30 +42,28 @@ export const Signin = () => {
             setError('Please fill in all fields.');
             return;
         }
-    
+
         // Retrieve stored CAPTCHA from localStorage
         const storedCaptcha = localStorage.getItem('captchaText');
-        console.log('Stored CAPTCHA text from localStorage:', storedCaptcha); // Debugging
-        console.log('User-entered CAPTCHA:', captcha.trim()); // Debugging
-    
+
         // Verify CAPTCHA
         if (captcha.trim() !== storedCaptcha) {
             setError('CAPTCHA is incorrect. Please try again.');
             fetchCaptcha(); // Refresh CAPTCHA on error
             return;
         }
-    
+
         try {
             // Proceed with sign-in and send stored CAPTCHA along with the user input
-            const response = await axios.post(`${API_URL}/api/v1/user/signin`, {
+            const response = await axios.post("http://localhost:3000/api/v1/user/signin", {
                 username,
                 password,
                 captcha,  // User input
                 captchaStored: storedCaptcha,  // Stored CAPTCHA from localStorage
             }, { withCredentials: true });
-    
+
             if (response.status === 200) {
-                localStorage.setItem('token', response.data.token); 
+                localStorage.setItem('token', response.data.token);
                 navigate('/dashboard');
             }
         } catch (err) {
@@ -77,14 +76,14 @@ export const Signin = () => {
             localStorage.removeItem('captchaText');
         }
     };
-    
+
     return (
         <div>
             <AppBar />
             <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
-                style={{ backgroundImage: 'url(bg.jpg)' }}>
+                style={{ backgroundColor:'#0e1111'}}>
                 <div className="flex flex-col justify-center">
-                    <div className="rounded-lg bg-[rgb(255,255,255)] text-center p-4 mt-5 ">
+                    <div className="rounded-lg bg-white text-center p-4 mt-5 ">
                         <Heading label="Sign in" />
                         <SubHeading label="Enter your credentials to access your account" />
                         <InputBox
@@ -103,6 +102,7 @@ export const Signin = () => {
                         <div className="pt-4">
                             {captchaImage ? (
                                 <div>
+                                    {/* Dynamically render CAPTCHA image */}
                                     <img src={`data:image/svg+xml;utf8,${encodeURIComponent(captchaImage)}`} alt="CAPTCHA" className="mb-4" />
                                     <Button onClick={fetchCaptcha} label="Refresh CAPTCHA" />
                                 </div>

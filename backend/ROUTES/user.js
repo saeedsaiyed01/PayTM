@@ -108,7 +108,7 @@ router.post("/signup", async (req, res) => {
 
     // Create an associated account
     const userId = user._id;
-    await Account.create({  
+    await Account.create({
         userId,
         balance: 1 + Math.random() * 10000
     });
