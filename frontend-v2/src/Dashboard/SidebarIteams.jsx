@@ -1,10 +1,16 @@
-import React from 'react';
-
-export function SidebarItem(props) {
+export function SidebarItem({ text, icon, onClick, sidebarOpen }) {
   return (
-    <div className="flex items-center space-x-4 p-2 hover:bg-gray-200 cursor-pointer" onClick={props.onClick}>
-      <div className="icon">{props.icon}</div>
-      <div className="text">{props.text}</div>
+    <div
+      onClick={onClick}
+      className={`
+        flex items-center p-3 rounded-lg cursor-pointer transition-all duration-300
+        hover:bg-gray-200 
+        ${sidebarOpen ? "justify-start px-4 w-full" : "justify-center w-12"}
+      `}
+    >
+      <div className="text-2xl text-gray-600">{icon}</div>
+
+      {sidebarOpen && <span className="ml-3 text-gray-800">{text}</span>}
     </div>
   );
 }

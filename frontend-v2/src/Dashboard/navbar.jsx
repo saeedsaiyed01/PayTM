@@ -1,13 +1,35 @@
 // Navbar Component
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 export const Navbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [username, setUsername] = useState("");
+  const [lastName, setlastName] = useState("");
+
+  useEffect(() => {
+      const fetchName = async () => {
+          try {
+              const response = await axios.get("http://localhost:3000/api/v1/user/me", {
+                  headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                  }
+              });
+              setUsername(response.data.firstName);
+              setlastName(response.data.lastName);
+          } catch (error) {
+              console.error('Error fetching name:', error);
+          }
+      };
+
+      fetchName();
+  }, []); // Dependency array ensures this runs only once on mount
+
   
   return (
     <div className="flex justify-between items-center mb-8">
       <div>
         <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        <p className="text-sm text-gray-500 mt-1">Welcome back, Alex</p>
+        <p className="text-sm text-gray-500 mt-1">Welcome , {username}</p>
       </div>
       
       <div className="flex items-center gap-6">
@@ -47,14 +69,15 @@ export const Navbar = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <img
-            src="/api/placeholder/40/40"
-            alt="Profile"
-            className="w-10 h-10 rounded-full border-2 border-gray-200"
-          />
+        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mt-1 mr-2">
+                    <div className="text-xl font-semibold">
+                        {username ? username.charAt(0).toUpperCase() : `${username}`}
+                        {lastName ? lastName.charAt(0).toUpperCase() : ""}
+                    </div>
+                </div>
           <div className="hidden md:block">
-            <p className="text-sm font-medium">Alex Thompson</p>
-            <p className="text-xs text-gray-500">alex@example.com</p>
+            <p className="text-sm font-medium">{username}</p>
+            <p className="text-xs text-gray-500">{lastName}</p>
           </div>
         </div>
       </div>

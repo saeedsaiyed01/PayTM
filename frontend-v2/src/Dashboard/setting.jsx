@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 export const SettingsPage = () => {
     const [activeTab, setActiveTab] = useState('profile');
     

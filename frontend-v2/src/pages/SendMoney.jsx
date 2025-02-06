@@ -58,7 +58,6 @@ function Checkmark({ size = 100, strokeWidth = 2, color = "green", className = "
 export const SendMoney = () => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
-
     const [amount, setAmount] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [balance, setBalance] = useState(null);
@@ -79,22 +78,23 @@ export const SendMoney = () => {
     }, []);
 
     const handlePinSubmit = async (pin) => {
-        if (!amount || isNaN(amount) || amount.startsWith('0') || amount > balance) {
+        const parsedAmount = parseFloat(amount);
+    
+        if (!amount || isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > balance) {
             setError('Please enter a valid amount.');
             return;
         }
-
+    
         setError('');
-
+    
         try {
-            const response = await axios.post(`${API_URL}/api/v1/account/transfer`, {
-                to: id,
-                amount: parseFloat(amount),
+            const response = await axios.post(`${API_URL}/api/v1/user/addBalance`, {
+                amount: parsedAmount,
                 pin
             }, {
-                headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             });
-
+    
             if (response.status === 200) {
                 setIsSuccess(true);
                 const audio = new Audio('/sounds/payment-successfull-audio.mp3');
@@ -105,7 +105,7 @@ export const SendMoney = () => {
             setError('Transfer failed. Please try again.');
         }
     };
-
+    
     return (
         <div>
             <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center" style={{ backgroundImage: 'url(bg.jpg)' }}>

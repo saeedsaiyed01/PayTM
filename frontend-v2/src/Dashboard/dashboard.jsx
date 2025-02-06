@@ -2,7 +2,7 @@
 import { BalanceCard } from "./balance";
 import { Layout } from "./layout";
 import { Stats } from "./stats";
-import { TransactionsList } from "./transaction-list";
+import { TransactionsList } from "./transactionList";
 
 export const HeroDashboard = () => {
     
@@ -16,11 +16,11 @@ export const HeroDashboard = () => {
     };
   
     return (
-      <Layout>
-        <div className=" flex flex-col h-screen  max-w-6xl mx-auto ">
+      <Layout >
+        <div className=" flex flex-col h-screen  max-w-6xl  mx-auto ">
           <BalanceCard 
-            balance={dashboardData.balance} 
-            growth={dashboardData.growth}
+              balance={dashboardData.balance}
+              growth={dashboardData.growth}
           />
           <Stats 
             income={dashboardData.income}
