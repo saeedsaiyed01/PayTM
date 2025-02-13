@@ -7,9 +7,9 @@ function Transactions() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div >
-        <AppBar/>
-        <TransactionsList/>
-         <TransactionItem/>
+        <AppBar />
+        <TransactionsList />
+        <TransactionItem />
       </div>
     </div>
   )

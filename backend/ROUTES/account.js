@@ -36,7 +36,7 @@ router.post("/transaction", authMiddleware, async (req, res) => {
             amount,
             category,
             status
-        });
+        }); 
         
         await transaction.save();
         res.status(201).json(transaction);
@@ -104,7 +104,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
       const recipientTransaction = new Transaction({
           userId: to,
           type: "credit",
-          name: `Received from ${sender.firstName}`,
+          name: `Received a from ${sender.firstName}`,
           date: new Date(),
           amount,
           category: "Transfer",

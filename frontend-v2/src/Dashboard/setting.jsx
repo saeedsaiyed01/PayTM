@@ -6,7 +6,7 @@ export const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [userId, setUserId] = useState(null);
 
-  // State for user details
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -68,11 +68,10 @@ export const SettingsPage = () => {
                   <button
                     key={tab.toLowerCase()}
                     onClick={() => setActiveTab(tab.toLowerCase())}
-                    className={`py-4 px-2 border-b-2 font-medium ${
-                      activeTab === tab.toLowerCase()
-                        ? "border-purple-600 text-purple-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    }`}
+                    className={`py-4 px-2 border-b-2 font-medium ${activeTab === tab.toLowerCase()
+                      ? "border-purple-600 text-purple-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700"
+                      }`}
                   >
                     {tab}
                   </button>
@@ -84,7 +83,7 @@ export const SettingsPage = () => {
           <div className="p-6">
             {activeTab === "profile" && (
               <div className="space-y-6">
-                
+
 
                 <div className="grid grid-cols-2 gap-6">
                   <div>

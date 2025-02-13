@@ -23,22 +23,22 @@ export const Signup = () => {
 
   const validateField = (field, value) => {
     let error = "";
-  
+
     if (typeof value === "string" && !value.trim()) {
       error = `${field} is required`;
     }
-  
+
     if (field === "username" && typeof value === "string" && value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       error = "Invalid email format";
     }
-  
+
     if (field === "password" && typeof value === "string" && value.length > 0 && value.length < 6) {
       error = "Password must be at least 6 characters";
     }
-  
+
     setErrors((prev) => ({ ...prev, [field]: error }));
   };
-  
+
   const validateForm = () => {
     const { firstName, lastName, username, password, pin, confirmPin } = formData;
     const newErrors = {};
@@ -95,22 +95,22 @@ export const Signup = () => {
           <div className="space-y-3">
             <InputBox label="First Name" value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} />
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
-            
+
             <InputBox label="Last Name" value={formData.lastName} onChange={(e) => handleInputChange("lastName", e.target.value)} />
             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
-            
+
             <InputBox label="Email" value={formData.username} onChange={(e) => handleInputChange("username", e.target.value)} />
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
-            
+
             <InputBoxPass label="Password" value={formData.password} onChange={(e) => handleInputChange("password", e.target.value)} />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-            
+
             <InputBoxPin label="Create PIN" pin={formData.pin} setPin={(value) => handleInputChange("pin", value)} />
             {errors.pin && <p className="text-red-500 text-sm">{errors.pin}</p>}
-            
+
             <InputBoxPin label="Confirm PIN" pin={formData.confirmPin} setPin={(value) => handleInputChange("confirmPin", value)} />
             {errors.confirmPin && <p className="text-red-500 text-sm">{errors.confirmPin}</p>}
-            
+
             <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 rounded-lg transition duration-300 text-sm" onClick={handleSignup}>
               Sign Up
             </button>
@@ -119,7 +119,7 @@ export const Signup = () => {
           <BottomWarning label="Already have an account?" buttonText="Sign In" to="/signin" />
         </motion.div>
       </div>
-     
+
     </div>
   );
 };

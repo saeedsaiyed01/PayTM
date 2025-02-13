@@ -1,5 +1,8 @@
 import { ArrowUpRight, CreditCard, History, SendHorizontal, Shield, Wallet } from 'lucide-react';
 import React from 'react';
+
+
+
 function FeatureCard({ icon: Icon, title, description }) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
@@ -24,9 +27,9 @@ function App() {
           </div>
 
           <a href="/signup">
-          <button className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors">
-            Get Started
-          </button>
+            <button className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+              Get Started
+            </button>
           </a>
         </div>
       </nav>
@@ -43,34 +46,34 @@ function App() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <a href="/signup">
-              <button className="bg-blue-700 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition-colors flex items-center justify-center gap-2">
-                Start Sending <ArrowUpRight className="w-5 h-5" />
-              </button>
+                <button className="bg-blue-700 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition-colors flex items-center justify-center gap-2">
+                  Start Sending <ArrowUpRight className="w-5 h-5" />
+                </button>
               </a>
               <button className="bg-white text-blue-700 px-8 py-3 rounded-lg hover:bg-blue-200 transition-colors border-2 border-blue-700">
                 Learn More
               </button>
             </div>
           </div>
-          
+
           {/* Stats/Features Cards */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
-            <FeatureCard 
+            <FeatureCard
               icon={SendHorizontal}
               title="Instant Transfers"
               description="Send money to anyone, anywhere, instantly with zero hassle"
             />
-            <FeatureCard 
+            <FeatureCard
               icon={Shield}
               title="Secure Payments"
               description="Bank-grade encryption and security for your peace of mind"
             />
-            <FeatureCard 
+            <FeatureCard
               icon={History}
               title="Transfer History"
               description="Track all your transactions with detailed history"
             />
-            <FeatureCard 
+            <FeatureCard
               icon={Wallet}
               title="Digital Wallet"
               description="Manage your money with our easy-to-use digital wallet"

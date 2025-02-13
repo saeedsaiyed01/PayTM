@@ -12,12 +12,26 @@ export const SendMoney = () => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
     const name = searchParams.get("name");
+    
     const [amount, setAmount] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [balance, setBalance] = useState(null);
     const [error, setError] = useState('');
+    const [userId, setUserId] = useState(null);
 
+    // Fetch user details including userId
     useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/api/v1/user/me`, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                setUserId(response.data._id);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
         const fetchBalance = async () => {
             try {
                 const response = await axios.get(`${API_URL}/api/v1/account/balance`, {
@@ -28,6 +42,8 @@ export const SendMoney = () => {
                 console.error('Error fetching balance:', error);
             }
         };
+
+        fetchUserData();
         fetchBalance();
     }, []);
 
@@ -36,9 +52,9 @@ export const SendMoney = () => {
             setError('Please enter a valid amount.');
             return;
         }
-    
+
         setError('');
-    
+
         try {
             const response = await axios.post(`${API_URL}/api/v1/account/transfer`, {
                 to: id,
@@ -47,40 +63,12 @@ export const SendMoney = () => {
             }, {
                 headers: { Authorization: "Bearer " + localStorage.getItem("token") }
             });
-    
+
             if (response.status === 200) {
                 setIsSuccess(true);
                 const audio = new Audio('/sounds/payment-successfull-audio.mp3');
                 audio.play();
-                console.log("Sender userId:", localStorage.getItem("userId"));
 
-                // ✅ Debit transaction for the sender
-                await axios.post(`${API_URL}/api/v1/account/transaction`, {
-                    
-                    userId:id,
-                    type: "debit",
-                    name: `Transfer to ${name}`,
-                    date: new Date(),
-                    amount: parseFloat(amount),
-                    category: "Transfer",
-                    status: "completed"
-                }, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                });
-    
-                // ✅ Credit transaction for the recipient
-                await axios.post(`${API_URL}/api/v1/account/transaction`, {
-                    userId: id,  // Recipient's user ID
-                    type: "credit",
-                    name: `Received from ${localStorage.getItem("userName")}`, // Assuming sender name is stored
-                    date: new Date(),
-                    amount: parseFloat(amount),
-                    category: "Transfer",
-                    status: "completed"
-                }, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                });
-    
                 // ✅ Update balance after successful transfer
                 setBalance(prevBalance => prevBalance - amount);
             }
@@ -89,12 +77,11 @@ export const SendMoney = () => {
             setError('Transfer failed. Please try again.');
         }
     };
-    
 
     return (
         <div>
             <AppBar />
-            <div className="bg-cover  bg-center bg-no-repeat h-screen flex justify-center" style={{ backgroundImage: 'url(bg.jpg)' }}>
+            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center" style={{ backgroundImage: 'url(bg.jpg)' }}>
                 <div className="h-full flex flex-col justify-center">
                     <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-blue-200 shadow-lg rounded-2">
                         <div className="flex flex-col space-y-1.5 p-6">

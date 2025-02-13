@@ -5,7 +5,7 @@ import { BottomWarning } from '../components/BottomWar';
 import { InputBox } from '../components/InputBox';
 import PinInput from '../components/PinInput';
 import { Checkmark } from '../components/motion';
-const API_URL = "http://localhost:3000"; 
+const API_URL = "http://localhost:3000";
 
 const AddBalancePage = () => {
     const [amount, setAmount] = useState('');
@@ -28,19 +28,19 @@ const AddBalancePage = () => {
                 console.error('Error fetching balance:', error);
             }
         };
-        
+
         console.log("Stored Token:", localStorage.getItem('token'));
         fetchBalance();
     }, []);
 
     const handlePinSubmit = async (pin) => {
         const parsedAmount = parseFloat(amount);
-    
+
         if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
             setError('Please enter a valid amount.');
             return;
         }
-    
+
         try {
             const response = await axios.post(
                 `${API_URL}/api/v1/user/addBalance`,
@@ -55,8 +55,8 @@ const AddBalancePage = () => {
 
             if (response.status === 200) {
                 const { newBalance } = response.data;
-                
-                setBalance(parseFloat(newBalance)); 
+
+                setBalance(parseFloat(newBalance));
                 setIsPaymentSuccessful(true);
                 setError('');
             }
@@ -65,7 +65,7 @@ const AddBalancePage = () => {
             setError('Error adding balance, please try again.');
         }
     };
-    
+
     return (
         <div>
             <AppBar />
@@ -78,7 +78,7 @@ const AddBalancePage = () => {
                         <div className="p-6">
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                
+
                                     <InputBox onChange={(e) => setAmount(e.target.value)} placeholder="100" label="Amount" />
                                     {error && <p className="text-red-500 text-sm">{error}</p>}
                                 </div>

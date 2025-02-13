@@ -14,21 +14,21 @@ function App() {
 
   return (
 
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
         <Route path="/setting" element={<SettingsPage />} />
-          {/* //TODO: remove it after test */}
+        {/* //TODO: remove it after test */}
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/dashboard" element={<HeroDashboard />} />
-          <Route path="/Signup" element={<Signup />} />
-          <Route path="/Signin" element={<Signin />} />
-          <Route path="/tranfer" element={<DashboardMain />} />
-          <Route path="/addBalance" element={<AddBalancePage/>} />
-          <Route path="/send" element={<SendMoney />} />
-          <Route path="/" element={<Hero />} />
-          
-        </Routes>
-      </BrowserRouter>
+        <Route path="/Signup" element={<Signup />} />
+        <Route path="/Signin" element={<Signin />} />
+        <Route path="/transfer" element={<DashboardMain />} />
+        <Route path="/addBalance" element={<AddBalancePage />} />
+        <Route path="/send" element={<SendMoney />} />
+        <Route path="/" element={<Hero />} />
+
+      </Routes>
+    </BrowserRouter>
   )
 }
 

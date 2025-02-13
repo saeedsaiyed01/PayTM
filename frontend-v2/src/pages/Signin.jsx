@@ -188,8 +188,8 @@ export const Signin = () => {
           >
             Sign In
           </button>
-          
-      <BottomWarning label="Don't have an account?" buttonText="Sign Up" to="/signup" />
+
+          <BottomWarning label="Don't have an account?" buttonText="Sign Up" to="/signup" />
         </motion.div>
       </div>
       {/* Bottom warning can be added at the bottom */}

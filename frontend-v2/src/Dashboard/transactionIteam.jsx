@@ -3,7 +3,7 @@ import React from 'react';
 import ArrowDown from '../icons/ArrowDown';
 import ArrowUp from '../icons/ArrowUp';
 
-// Utility function for number formatting
+
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -15,7 +15,6 @@ const formatCurrency = (amount) => {
 export const TransactionItem = ({ type, name, date, amount, category, status }) => {
   const isCredit = type === 'credit';
 
-  // Styles based on status
   const statusStyles = {
     completed: "bg-green-50 text-green-600",
     pending: "bg-yellow-50 text-yellow-600",
@@ -24,14 +23,12 @@ export const TransactionItem = ({ type, name, date, amount, category, status }) 
 
   return (
     <div className="flex items-center justify-between py-4 hover:bg-gray-50 px-4 rounded-lg transition-colors">
-      {/* Left section: Icon and Transaction Details */}
       <div className="flex items-center gap-4">
         <div
-          className={`w-12 h-14 rounded-3xl flex items-center justify-center ${
-            isCredit ? 'bg-green-100' : 'bg-red-300'
-          }`}
+          className={`w-12 h-14 rounded-3xl flex items-center justify-center ${isCredit ? 'bg-green-100' : 'bg-red-300'
+            }`}
         >
-       {isCredit ? <ArrowDown /> : <ArrowUp />}
+          {isCredit ? <ArrowDown /> : <ArrowUp />}
 
         </div>
         <div>
@@ -40,7 +37,6 @@ export const TransactionItem = ({ type, name, date, amount, category, status }) 
         </div>
       </div>
 
-      {/* Right section: Amount and Status */}
       <div className="text-right">
         <p className={`font-medium ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
           {isCredit ? '+' : '-'}{formatCurrency(amount)}

@@ -52,7 +52,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
       {/* Sidebar Menu */}
       <div className="pt-2 text-lg font-medium space-y-4">
         <SidebarItem
-          onClick={() => navigate("/tranfer")}
+          onClick={() => navigate("/transfer")}
           text="Transfer"
           icon={<Home />}
           sidebarOpen={sidebarOpen}

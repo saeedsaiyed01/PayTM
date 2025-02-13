@@ -10,12 +10,12 @@ export const TransactionsList = () => {
     const fetchTransactions = async () => {
       try {
         // Use axios.get to perform a GET request.
-        const response = await axios.get('http://localhost:3000/api/v1/account/transaction',{
+        const response = await axios.get('http://localhost:3000/api/v1/account/transaction', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
           }
         });
-     
+
         // Directly access response.data as it is already parsed.
         setTransactions(response.data);
       } catch (error) {
