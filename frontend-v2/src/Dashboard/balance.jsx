@@ -4,6 +4,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 // Utility function for number formatting
 import { useEffect, useState } from 'react';
+import Growth from '../icons/growth';
 // const formatPercentage = (value) => {
 //   return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
 // };
@@ -31,25 +32,45 @@ export const BalanceCard = () => {
       
           fetchBalance();
         }, []);
-    return (
-      <div className="bg-indigo-600 text-white p-8 rounded-2xl mb-8">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-indigo-200 text-sm font-medium mb-2">Total Balance</p>
-           
-            <h3 className="text-4xl font-bold">
-            {balance !== null ? `RS ${Math.ceil(balance)}` : 'Loading...'}
-              </h3>
+        return (
+          <div className='flex gap-20'>
+          <div className="bg-purple-600 text-white px-6 py-4 rounded-2xl w-[500px]">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-white text-lg font-medium mt-1 ">Total Balance</p>
+                <h3 className="text-3xl font-bold">
+                  {balance !== null ? `$${Math.ceil(balance)}` : 'Loading...'}
+                </h3>
+                <div className="flex items-center text-md gap-2 text-white  mt-2">
+      <span><Growth/>  </span>
+      <p>+2.5% from last month</p>
+    </div>
+              </div>
+              <button
+                onClick={handleNavigate}
+                className="text-black bg-gradient-to-br bg-white hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                Add Money
+              </button>
+              
+            </div>
+            <div className="flex items-center gap-2 text-indigo-200"></div>
           </div>
-        
-          <button onClick={handleNavigate} className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-            Add Money
-          </button>
-        </div>
-        <div className="flex items-center gap-2 text-indigo-200">
-        
-        </div>
+
+          <div className="bg-purple-600 text-white px-6 py-4 rounded-2xl w-[500px]">
+    <div className="flex justify-between items-start mb-4">
+      <div>
+        <p className="text-white text-lg font-medium mt-1">Send Money</p>
+        <h3 className="text-2xl font-bold">Choose Recipient</h3>
+        <button
+          onClick={() => navigate('/tranfer')}
+          className="mt-3 bg-gradient-to-br bg-white hover:bg-gradient-to-bl text-black font-medium rounded-lg text-sm px-5 py-2.5"
+        >
+          Go to Dashboard
+        </button>
       </div>
-    );
-  };
-  
+    </div>
+  </div>
+</div>
+        );
+      }        

@@ -1,129 +1,198 @@
+// src/components/Signin.jsx
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar } from '../components/Appbar';
 import { BottomWarning } from '../components/BottomWar';
-import { Button } from '../components/Button';
-import { Heading } from '../components/Heading';
-import { InputBox } from '../components/InputBox';
-import InputBoxPass from '../components/InputBoxPass';
-import { SubHeading } from '../components/SubHeading';
-
-
 
 export const Signin = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [captcha, setCaptcha] = useState("");
-    const [captchaImage, setCaptchaImage] = useState(null);
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+  // Use email as the username for sign in
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [captcha, setCaptcha] = useState('');
+  const [captchaImage, setCaptchaImage] = useState(null);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
+  const navigate = useNavigate();
 
-    // Fetch CAPTCHA image on component mount
-    useEffect(() => {
-        fetchCaptcha();
-    }, []); // Only fetch CAPTCHA once on mount
+  // Animation variants for the card container
+  const containerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
 
-    const fetchCaptcha = async () => {
-        try {
-            const response = await axios.get("http://localhost:3000/api/v1/captcha/captcha", { withCredentials: true });
-            setCaptchaImage(response.data.captchaData); // Store the CAPTCHA SVG image data
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
 
-            // Store the CAPTCHA text in localStorage
-            localStorage.setItem('captchaText', response.data.captchaText);
-        } catch (err) {
-            console.error('Failed to load CAPTCHA', err);
-            setCaptchaImage(null);
-        }
-    };
+  const fetchCaptcha = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/v1/captcha/captcha', {
+        withCredentials: true,
+      });
+      setCaptchaImage(response.data.captchaData);
+      localStorage.setItem('captchaText', response.data.captchaText);
+    } catch (err) {
+      console.error('Failed to load CAPTCHA', err);
+    }
+  };
 
-    const handleSignIn = async () => {
-        if (!username || !password || !captcha) {
-            setError('Please fill in all fields.');
-            return;
-        }
+  // Basic email format validation
+  const isValidEmail = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-        // Retrieve stored CAPTCHA from localStorage
-        const storedCaptcha = localStorage.getItem('captchaText');
+  // onBlur handlers for inline error messages
+  const handleBlurEmail = () => {
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setEmailError('Email is required');
+    } else if (!isValidEmail(trimmed)) {
+      setEmailError('Please enter a valid email address');
+    } else {
+      setEmailError('');
+    }
+  };
 
-        // Verify CAPTCHA
-        if (captcha.trim() !== storedCaptcha) {
-            setError('CAPTCHA is incorrect. Please try again.');
-            fetchCaptcha(); // Refresh CAPTCHA on error
-            return;
-        }
+  const handleBlurPassword = () => {
+    if (!password) {
+      setPasswordError('Password is required');
+    } else {
+      setPasswordError('');
+    }
+  };
 
-        try {
-            // Proceed with sign-in and send stored CAPTCHA along with the user input
-            const response = await axios.post("http://localhost:3000/api/v1/user/signin", {
-                username,
-                password,
-                captcha,  // User input
-                captchaStored: storedCaptcha,  // Stored CAPTCHA from localStorage
-            }, { withCredentials: true });
+  const handleBlurCaptcha = () => {
+    if (!captcha.trim()) {
+      setCaptchaError('CAPTCHA is required');
+    } else {
+      setCaptchaError('');
+    }
+  };
 
-            if (response.status === 200) {
-                localStorage.setItem('token', response.data.token);
-                navigate('/hero');
-            }
-        } catch (err) {
-            console.error('Error signing in:', err);
-            const errorMessage = err.response?.data?.message || 'Sign in failed. Please try again.';
-            setError(errorMessage);
-            fetchCaptcha(); // Refresh CAPTCHA on error
-        } finally {
-            // Clear CAPTCHA from localStorage after sign-in attempt
-            localStorage.removeItem('captchaText');
-        }
-    };
+  const handleSignIn = async () => {
+    const trimmedEmail = email.trim();
+    const trimmedCaptcha = captcha.trim();
 
-    return (
-        <div>
-            <AppBar />
-            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center"
-                style={{ backgroundColor:'#0e1111'}}>
-                <div className="flex flex-col justify-center">
-                    <div className="rounded-lg bg-white text-center p-4 mt-5 ">
-                        <Heading label="Sign in" />
-                        <SubHeading label="Enter your credentials to access your account" />
-                        <InputBox
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Email"
-                            value={username}
-                            label="Email"
-                        />
-                        <InputBoxPass
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
-                            value={password}
-                            label="Password"
-                            type="password"
-                        />
-                        <div className="pt-4">
-                            {captchaImage ? (
-                                <div>
-                                    {/* Dynamically render CAPTCHA image */}
-                                    <img src={`data:image/svg+xml;utf8,${encodeURIComponent(captchaImage)}`} alt="CAPTCHA" className="mb-4" />
-                                    <Button onClick={fetchCaptcha} label="Refresh CAPTCHA" />
-                                </div>
-                            ) : (
-                                <p>Loading CAPTCHA...</p>
-                            )}
-                            <InputBox
-                                onChange={(e) => setCaptcha(e.target.value)}
-                                placeholder="Enter CAPTCHA"
-                                value={captcha}
-                                label="CAPTCHA"
-                            />
-                            {error && <p className="text-red-500">{error}</p>}
-                            <div className='mt-4'>
-                                <Button onClick={handleSignIn} label="Sign in" />
-                            </div>
-                        </div>
-                        <BottomWarning label="Don't have an account?" buttonText="Sign up" to="/signup" />
-                    </div>
-                </div>
+    // Validate fields before submission
+    if (!trimmedEmail || !password || !trimmedCaptcha) {
+      if (!trimmedEmail) setEmailError('Email is required');
+      if (!password) setPasswordError('Password is required');
+      if (!trimmedCaptcha) setCaptchaError('CAPTCHA is required');
+      return;
+    }
+    if (!isValidEmail(trimmedEmail)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    const storedCaptcha = localStorage.getItem('captchaText');
+    if (trimmedCaptcha !== storedCaptcha) {
+      setCaptchaError('CAPTCHA is incorrect');
+      fetchCaptcha(); // Refresh CAPTCHA on error
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/v1/user/signin',
+        {
+          username: trimmedEmail,
+          password,
+          captcha: trimmedCaptcha,
+          captchaStored: storedCaptcha,
+        },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      // Set a generic error message under the password field
+      setPasswordError('Sign in failed. Please try again.');
+      fetchCaptcha();
+    } finally {
+      localStorage.removeItem('captchaText');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50  to-blue-100">
+      {/* AppBar can be placed at the top */}
+      <AppBar />
+      <div className="flex items-center justify-center h-full">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-80 bg-white shadow-xl p-6  m-10 rounded-2xl border border-gray-200"
+        >
+          <h2 className="text-blue-600 text-2xl font-bold text-center mb-2">
+            Sign In
+          </h2>
+          <p className="text-gray-500 text-center mb-6">
+            Welcome back! Enter your details.
+          </p>
+
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 mb-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onBlur={handleBlurEmail}
+          />
+          {emailError && (
+            <p className="text-red-500 text-xs mb-2">{emailError}</p>
+          )}
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-3 mb-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onBlur={handleBlurPassword}
+          />
+          {passwordError && (
+            <p className="text-red-500 text-xs mb-2">{passwordError}</p>
+          )}
+
+          {captchaImage && (
+            <div className="flex justify-center mb-2">
+              <img
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(captchaImage)}`}
+                alt="CAPTCHA"
+                className="w-40 h-12 border border-gray-300 rounded-lg"
+              />
             </div>
-        </div>
-    );
+          )}
+
+          <input
+            type="text"
+            placeholder="Enter CAPTCHA"
+            className="w-full p-3 mb-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={captcha}
+            onChange={(e) => setCaptcha(e.target.value)}
+            onBlur={handleBlurCaptcha}
+          />
+          {captchaError && (
+            <p className="text-red-500 text-xs mb-2">{captchaError}</p>
+          )}
+
+          <button
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 mt-2 rounded-lg transition duration-300 text-sm"
+            onClick={handleSignIn}
+          >
+            Sign In
+          </button>
+          
+      <BottomWarning label="Don't have an account?" buttonText="Sign Up" to="/signup" />
+        </motion.div>
+      </div>
+      {/* Bottom warning can be added at the bottom */}
+    </div>
+  );
 };

@@ -35,7 +35,7 @@ const PinInput = ({ onSubmit }) => {
                     <input
                         key={index}
                         ref={inputRefs[index]}
-                        type="text"
+                        type="password"
                         maxLength="1"
                         value={digit}
                         onChange={(e) => handleChange(index, e.target.value)}

@@ -1,43 +1,91 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { AppBar } from "../components/Appbar";
 
-import { useState } from "react";
 export const SettingsPage = () => {
-    const [activeTab, setActiveTab] = useState('profile');
-    
-    return (
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl border border-gray-200">
+  const [activeTab, setActiveTab] = useState("profile");
+  const [userId, setUserId] = useState(null);
+
+  // State for user details
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/v1/user/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUserId(response.data._id); // Extract userId from response
+        setFirstName(response.data.firstName || "");
+        setLastName(response.data.lastName || "");
+        setEmail(response.data.username || ""); // Assuming username is email
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (token) {
+      fetchUserData();
+    }
+  }, [token]);
+
+  const handleSaveChanges = async () => {
+    if (!userId) {
+      alert("User ID not found!");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/v1/user/update-user/${userId}`,
+        { firstName, lastName, username: email }, // Ensure key names match your backend
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.status === 200) {
+        alert("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
+  return (
+    <div className="">
+      <AppBar />
+      <div className="max-w-4xl mt-10 pl-96">
+        <div className="bg-blue-200 rounded-xl border border-gray-200">
           <div className="border-b border-gray-200">
             <div className="flex space-x-8 px-6">
-              {['Profile', 'Security', 'Notifications', 'Payment Methods'].map((tab) => (
-                <button
-                  key={tab.toLowerCase()}
-                  onClick={() => setActiveTab(tab.toLowerCase())}
-                  className={`py-4 px-2 border-b-2 font-medium ${
-                    activeTab === tab.toLowerCase()
-                      ? 'border-indigo-600 text-indigo-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+              {["Profile"].map(
+                (tab) => (
+                  <button
+                    key={tab.toLowerCase()}
+                    onClick={() => setActiveTab(tab.toLowerCase())}
+                    className={`py-4 px-2 border-b-2 font-medium ${
+                      activeTab === tab.toLowerCase()
+                        ? "border-purple-600 text-purple-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                )
+              )}
             </div>
           </div>
-          
+
           <div className="p-6">
-            {activeTab === 'profile' && (
+            {activeTab === "profile" && (
               <div className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <img
-                    src="/api/placeholder/80/80"
-                    alt="Profile"
-                    className="w-20 h-20 rounded-full"
-                  />
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
-                    Change Photo
-                  </button>
-                </div>
                 
+
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -45,7 +93,8 @@ export const SettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      defaultValue="Alex"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     />
                   </div>
@@ -55,24 +104,29 @@ export const SettingsPage = () => {
                     </label>
                     <input
                       type="text"
-                      defaultValue="Thompson"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email
                   </label>
                   <input
                     type="email"
-                    defaultValue="alex@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg"
                   />
                 </div>
-                
-                <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+
+                <button
+                  onClick={handleSaveChanges}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
                   Save Changes
                 </button>
               </div>
@@ -80,7 +134,6 @@ export const SettingsPage = () => {
           </div>
         </div>
       </div>
-    );
-  };
-  
-  
+    </div>
+  );
+};

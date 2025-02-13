@@ -1,165 +1,84 @@
-import React, { useState } from 'react';
-
-const Hero = () => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
+import { ArrowUpRight, CreditCard, History, SendHorizontal, Shield, Wallet } from 'lucide-react';
+import React from 'react';
+function FeatureCard({ icon: Icon, title, description }) {
   return (
-    <div className={`relative min-h-screen overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-50 to-white'}`}>
-      {/* Navbar */}
-      <nav className={`shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex-shrink-0">
-              <a href="#" className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-blue-600'}`}>PayCheck </a>
-            </div>
-            <div className="hidden md:flex items-center space-x-4">
-              <button 
-                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                onClick={toggleDarkMode}
-              >
-                Toggle Dark Mode
-              </button>
-              <a
-                href="/login"
-                className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold transition"
-              >
-                Login
-              </a>
-              <a
-                href="/signup"
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-semibold transition"
-              >
-                Signup
-              </a>
-            </div>
-            <div className="md:hidden">
-              <button className={`${darkMode ? 'text-gray-300' : 'text-gray-800'} focus:outline-none`}>☰</button>
-            </div>
+    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+      <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+        <Icon className="text-blue-700 w-6 h-6" />
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 text-gray-900">
+      {/* Navigation */}
+      <nav className="container mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <CreditCard className="w-8 h-8 text-blue-700" />
+            <span className="text-2xl font-bold">PayLink</span>
           </div>
+
+          <a href="/signup">
+          <button className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+            Get Started
+          </button>
+          </a>
         </div>
       </nav>
 
-      {/* Animated shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-0 left-0 w-96 h-96 rounded-full mix-blend-multiply blur-3xl animate-blob ${darkMode ? 'bg-blue-800/20' : 'bg-blue-200/20'}`}></div>
-        <div className={`absolute top-0 right-0 w-96 h-96 rounded-full mix-blend-multiply blur-3xl animate-blob animation-delay-2000 ${darkMode ? 'bg-blue-700/20' : 'bg-blue-300/20'}`}></div>
-        <div className={`absolute -bottom-8 left-20 w-96 h-96 rounded-full mix-blend-multiply blur-3xl animate-blob animation-delay-4000 ${darkMode ? 'bg-blue-600/20' : 'bg-blue-400/20'}`}></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-        <div className="text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight mb-8">
-            <span className="inline-block">Explore the</span>
-            <br />
-            <span className={`inline-block bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent ${darkMode ? 'text-white' : ''}`}>Payment Projects</span>
-          </h1>
-
-          <p className="mt-6 max-w-2xl mx-auto text-xl transition-colors duration-300 ${darkMode ? 'text-gray-300' : 'text-gray-600'}">
-            A platform where you'llSend money with confidence and speed. We prioritize your safety and convenience
-          </p>
-
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto" id="features">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className={`group backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-card-pop ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white/50'}`}
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <div className={`w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform duration-300 ${darkMode ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-600'}`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm">{feature.description}</p>
-              </div>
-            ))}
+      {/* Hero Section */}
+      <div className="container mx-auto px-6 pt-20 pb-24">
+        <div className="flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-4xl lg:text-6xl font-bold mb-6">
+              Send Money Instantly, <span className="text-blue-700">Securely</span>
+            </h1>
+            <p className="text-lg mb-8 max-w-2xl text-gray-700">
+              Experience seamless money transfers with PayLink. Send money, track transactions, and manage your wallet - all in one secure platform.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <a href="/signup">
+              <button className="bg-blue-700 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition-colors flex items-center justify-center gap-2">
+                Start Sending <ArrowUpRight className="w-5 h-5" />
+              </button>
+              </a>
+              <button className="bg-white text-blue-700 px-8 py-3 rounded-lg hover:bg-blue-200 transition-colors border-2 border-blue-700">
+                Learn More
+              </button>
+            </div>
+          </div>
+          
+          {/* Stats/Features Cards */}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
+            <FeatureCard 
+              icon={SendHorizontal}
+              title="Instant Transfers"
+              description="Send money to anyone, anywhere, instantly with zero hassle"
+            />
+            <FeatureCard 
+              icon={Shield}
+              title="Secure Payments"
+              description="Bank-grade encryption and security for your peace of mind"
+            />
+            <FeatureCard 
+              icon={History}
+              title="Transfer History"
+              description="Track all your transactions with detailed history"
+            />
+            <FeatureCard 
+              icon={Wallet}
+              title="Digital Wallet"
+              description="Manage your money with our easy-to-use digital wallet"
+            />
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-const features = [
-  {
-    icon: (
-      <svg
-        className="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-        />
-      </svg>
-    ),
-    title: "Secure Payments",
-    description: "Bank-grade security with end-to-end encryption for all transactions",
-  },
-  {
-    icon: (
-      <svg
-        className="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 10V3L4 14h7v7l9-11h-7z"
-        />
-      </svg>
-    ),
-    title: "Instant Transfers",
-    description: "Send and receive money instantly, anytime and anywhere",
-  },
-  {
-    icon: (
-      <svg
-        className="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-        />
-      </svg>
-    ),
-    title: "Bill Payments",
-    description: "Pay all your bills in one place with automatic reminders",
-  },
-  {
-    icon: (
-      <svg
-        className="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    ),
-    title: "Rewards",
-    description: "Earn cashback and points on every transaction",
-  },
-];
-
-export default Hero;
+}
+export default App;

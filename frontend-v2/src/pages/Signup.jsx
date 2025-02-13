@@ -1,177 +1,125 @@
 import axios from "axios";
-import { useState } from "react";
+import { motion } from "framer-motion";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppBar } from "../components/Appbar";
 import { BottomWarning } from "../components/BottomWar";
-import { Button } from "../components/Button";
-import { Heading } from "../components/Heading";
 import { InputBox } from "../components/InputBox";
 import InputBoxPass from "../components/InputBoxPass";
 import { InputBoxPin } from "../components/InputBoxPin";
-import { SubHeading } from "../components/SubHeading";
-
 const API_URL = "http://localhost:3000";
+
 export const Signup = () => {
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        username: "",
-        password: "",
-        pin: ["", "", "", ""],
-        confirmPin: ["", "", "", ""],
-    });
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    pin: ["", "", "", ""],
+    confirmPin: ["", "", "", ""],
+  });
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-    // Validation Functions
-    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const validatePassword = (password) => password.length >= 6;
+  const validateField = (field, value) => {
+    let error = "";
+  
+    if (typeof value === "string" && !value.trim()) {
+      error = `${field} is required`;
+    }
+  
+    if (field === "username" && typeof value === "string" && value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      error = "Invalid email format";
+    }
+  
+    if (field === "password" && typeof value === "string" && value.length > 0 && value.length < 6) {
+      error = "Password must be at least 6 characters";
+    }
+  
+    setErrors((prev) => ({ ...prev, [field]: error }));
+  };
+  
+  const validateForm = () => {
+    const { firstName, lastName, username, password, pin, confirmPin } = formData;
+    const newErrors = {};
+    if (!firstName.trim()) newErrors.firstName = "First Name is required";
+    if (!lastName.trim()) newErrors.lastName = "Last Name is required";
+    if (!username.trim()) newErrors.username = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) newErrors.username = "Invalid email format";
+    if (!password) newErrors.password = "Password is required";
+    else if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (pin.includes("")) newErrors.pin = "All PIN fields are required";
+    if (confirmPin.includes("")) newErrors.confirmPin = "All confirm PIN fields are required";
+    if (pin.join("") !== confirmPin.join("")) newErrors.confirmPin = "PINs do not match";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    const handleInputChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    validateField(field, value);
+  };
 
-        // Real-time Validation
-        if (field === "username" && !validateEmail(value)) {
-            setErrors((prev) => ({ ...prev, username: "Invalid email format" }));
-        } else if (field === "username") {
-            setErrors((prev) => ({ ...prev, username: "" }));
-        }
+  const handleSignup = async () => {
+    if (!validateForm()) return;
+    try {
+      const { firstName, lastName, username, password, pin } = formData;
+      const response = await axios.post(`${API_URL}/api/v1/user/signup`, {
+        username,
+        firstName,
+        lastName,
+        password,
+        pin: pin.join(""),
+      });
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        form: error.response?.data?.message || "Signup failed. Please try again.",
+      }));
+    }
+  };
 
-        if (field === "password" && !validatePassword(value)) {
-            setErrors((prev) => ({
-                ...prev,
-                password: "Password must be at least 6 characters",
-            }));
-        } else if (field === "password") {
-            setErrors((prev) => ({ ...prev, password: "" }));
-        }
-    };
-
-    const handlePinChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-        if (field === "confirmPin" && value.join("") !== formData.pin.join("")) {
-            setErrors((prev) => ({ ...prev, confirmPin: "PINs do not match" }));
-        } else if (field === "confirmPin") {
-            setErrors((prev) => ({ ...prev, confirmPin: "" }));
-        }
-    };
-
-    const handleSubmit = async () => {
-        const { firstName, lastName, username, password, pin, confirmPin } = formData;
-
-        // Check for Empty Fields
-        if (!firstName || !lastName || !username || !password || pin.includes("")) {
-            setErrors((prev) => ({ ...prev, form: "All fields are required" }));
-            return;
-        }
-
-        // Final PIN Match Validation
-        if (pin.join("") !== confirmPin.join("")) {
-            setErrors((prev) => ({ ...prev, confirmPin: "PINs do not match" }));
-            return;
-        }
-
-        try {
-            // Make the API request
-            const response = await axios.post(`${API_URL}/api/v1/user/signup`, {
-                username,
-                firstName,
-                lastName,
-                password,
-                pin: pin.join(""),
-            });
-
-            // Save token to localStorage and navigate to dashboard
-            localStorage.setItem("token", response.data.token);
-            navigate("/hero");
-        } catch (error) {
-            console.error("Signup failed:", error.response?.data || error.message);
-            setErrors((prev) => ({
-                ...prev,
-                form: error.response?.data?.message || "Signup failed. Please try again.",
-            }));
-        }
-    };
-
-    return (
-        <div className="h-screen ">
-            <AppBar />
-            <div
-                className="bg-cover bg-center bg-no-repeat h-screen flex p-0  justify-center"
-                style={{ backgroundColor:'#0e1111'}}>
-                <div className="flex flex-col justify-center">
-                    <div className="rounded-lg bg-white text-center  h-max px-4 shadow-lg">
-                        <Heading label={"Sign Up"} />
-                        <SubHeading label={"Enter your information to create an account"} />
-
-                        {/* Input Fields */}
-                        <InputBox
-                            onChange={(e) => handleInputChange("firstName", e.target.value)}
-                            placeholder="John"
-                            label={"First Name"}
-                            value={formData.firstName}
-                        />
-                        <InputBox
-                            onChange={(e) => handleInputChange("lastName", e.target.value)}
-                            placeholder="Doe"
-                            label={"Last Name"}
-                            value={formData.lastName}
-                        />
-                        <InputBox
-                            onChange={(e) => handleInputChange("username", e.target.value)}
-                            placeholder="aadil@gmail.com"
-                            label={"Email"}
-                            value={formData.username}
-                        />
-                        {errors.username && (
-                            <p className="text-red-500 text-sm">{errors.username}</p>
-                        )}
-
-                        <InputBoxPass
-                            onChange={(e) => handleInputChange("password", e.target.value)}
-                            placeholder="******"
-                            label="Password"
-                            type="password"
-                            value={formData.password}
-                        />
-                        {errors.password && (
-                            <p className="text-red-500 text-sm">{errors.password}</p>
-                        )}
-
-                        {/* PIN Input */}
-                        <InputBoxPin
-                            label={"Create PIN"}
-                            pin={formData.pin}
-                            setPin={(value) => handlePinChange("pin", value)}
-                        />
-                        <InputBoxPin
-                            label={"Confirm PIN"}
-                            pin={formData.confirmPin}
-                            setPin={(value) => handlePinChange("confirmPin", value)}
-                        />
-                        {errors.confirmPin && (
-                            <p className="text-red-500 text-sm">{errors.confirmPin}</p>
-                        )}
-
-                        {/* Submit Button */}
-                        <div className="pt-4">
-                            <Button onClick={handleSubmit} label={"Sign up"} />
-                        </div>
-
-                        {/* Form-Level Error */}
-                        {errors.form && (
-                            <p className="text-red-500 text-sm mt-2">{errors.form}</p>
-                        )}
-
-                        {/* Bottom Warning */}
-                        <BottomWarning
-                            label={"Already have an account?"}
-                            buttonText={"Signin"}
-                            to={"/signin"}
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-blue-100">
+      <AppBar />
+      <div className="flex items-center justify-center flex-grow">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0, transition: { duration: 0.6 } }}
+          className="w-96 bg-white shadow-lg  m-6 p-5 rounded-xl border border-gray-200"
+        >
+          <h2 className="text-blue-600 text-xl font-bold text-center">Sign Up</h2>
+          <p className="text-gray-500 text-center mb-4">Create your account</p>
+          <div className="space-y-3">
+            <InputBox label="First Name" value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} />
+            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            
+            <InputBox label="Last Name" value={formData.lastName} onChange={(e) => handleInputChange("lastName", e.target.value)} />
+            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            
+            <InputBox label="Email" value={formData.username} onChange={(e) => handleInputChange("username", e.target.value)} />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+            
+            <InputBoxPass label="Password" value={formData.password} onChange={(e) => handleInputChange("password", e.target.value)} />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            
+            <InputBoxPin label="Create PIN" pin={formData.pin} setPin={(value) => handleInputChange("pin", value)} />
+            {errors.pin && <p className="text-red-500 text-sm">{errors.pin}</p>}
+            
+            <InputBoxPin label="Confirm PIN" pin={formData.confirmPin} setPin={(value) => handleInputChange("confirmPin", value)} />
+            {errors.confirmPin && <p className="text-red-500 text-sm">{errors.confirmPin}</p>}
+            
+            <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 rounded-lg transition duration-300 text-sm" onClick={handleSignup}>
+              Sign Up
+            </button>
+            {errors.form && <p className="text-red-500 text-sm mt-2">{errors.form}</p>}
+          </div>
+          <BottomWarning label="Already have an account?" buttonText="Sign In" to="/signin" />
+        </motion.div>
+      </div>
+     
+    </div>
+  );
 };

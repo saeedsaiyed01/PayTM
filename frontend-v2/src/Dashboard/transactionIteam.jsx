@@ -1,5 +1,7 @@
 // TransactionItem.jsx
 import React from 'react';
+import ArrowDown from '../icons/ArrowDown';
+import ArrowUp from '../icons/ArrowUp';
 
 // Utility function for number formatting
 const formatCurrency = (amount) => {
@@ -25,11 +27,12 @@ export const TransactionItem = ({ type, name, date, amount, category, status }) 
       {/* Left section: Icon and Transaction Details */}
       <div className="flex items-center gap-4">
         <div
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            isCredit ? 'bg-green-100' : 'bg-red-100'
+          className={`w-12 h-14 rounded-3xl flex items-center justify-center ${
+            isCredit ? 'bg-green-100' : 'bg-red-300'
           }`}
         >
-          {isCredit ? '↓' : '↑'}
+       {isCredit ? <ArrowDown /> : <ArrowUp />}
+
         </div>
         <div>
           <p className="font-medium text-gray-900">{name}</p>

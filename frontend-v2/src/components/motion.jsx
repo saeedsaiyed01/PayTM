@@ -1,7 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 
-const draw = {
+export const draw = {
   hidden: { pathLength: 0, opacity: 0 },
   visible: (i) => ({
     pathLength: 1,
@@ -19,7 +19,7 @@ const draw = {
   }),
 }
 
-function Checkmark({ size = 100, strokeWidth = 2, color = "currentColor", className = "" }) {
+export function Checkmark({ size = 100, strokeWidth = 2, color = "currentColor", className = "" }) {
   return (
     <motion.svg
       width={size}

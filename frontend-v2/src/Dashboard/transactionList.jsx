@@ -15,6 +15,7 @@ export const TransactionsList = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming you store JWT in localStorage
           }
         });
+     
         // Directly access response.data as it is already parsed.
         setTransactions(response.data);
       } catch (error) {
@@ -32,7 +33,7 @@ export const TransactionsList = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-blue-200 rounded-xl border border-gray-200 mt-4 overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
@@ -44,7 +45,7 @@ export const TransactionsList = () => {
               <option>Income</option>
               <option>Expense</option>
             </select>
-            <a href="#" className="text-indigo-600 text-sm font-medium hover:text-indigo-700">
+            <a href="#" className="text-purple-600 text-sm font-medium">
               View all
             </a>
           </div>

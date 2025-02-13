@@ -1,11 +1,13 @@
 import React from 'react'
 import { TransactionItem } from '../Dashboard/transactionIteam'
 import { TransactionsList } from '../Dashboard/transactionList'
+import { AppBar } from '../components/Appbar'
 
 function Transactions() {
   return (
-    <div>
-      <div className='h-screen w-68'>
+    <div className="min-h-screen bg-white flex flex-col">
+      <div >
+        <AppBar/>
         <TransactionsList/>
          <TransactionItem/>
       </div>

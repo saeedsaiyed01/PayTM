@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-
+import { useNavigate } from "react-router-dom";
+import Wallet from "../icons/wallet";
 export const AppBar = () => {
     const [username, setUsername] = useState("");
-    const [lastName, setlastName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchName = async () => {
@@ -15,29 +17,55 @@ export const AppBar = () => {
                     }
                 });
                 setUsername(response.data.firstName);
-                setlastName(response.data.lastName);
+                setLastName(response.data.lastName);
             } catch (error) {
                 console.error('Error fetching name:', error);
             }
         };
 
         fetchName();
-    }, []); // Dependency array ensures this runs only once on mount
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/signin');
+    };
 
     return (
-        <div className="shadow-lg h-14 flex justify-between items-center bg-gray-300">
-            <div className="flex flex-col justify-center h-full ml-4">
-               Pay App
+        <div className="bg-white shadow-md h-20 flex justify-between items-center px-6 lg:px-12 border-b border-gray-200">
+            <div className=" flex  gap-2 text-3xl font-bold text-black bg-clip-text ">
+               <Wallet/>PayLink
             </div>
-            <div className="flex items-center">
-                <div className="flex flex-col justify-center h-full mr-4 text-sm font-medium">
-                    Hello, {username} {lastName}
+
+            <div className="flex items-center space-x-6 relative">
+                <div className="hidden md:flex flex-col items-end">
+                    <span className="text-sm font-medium text-gray-600">Welcome back,</span>
+                    <span className="text-lg font-semibold text-gray-900">{username} {lastName}</span>
                 </div>
-                <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mt-1 mr-2">
-                    <div className="text-xl font-semibold">
-                        {username ? username.charAt(0).toUpperCase() : `${username}`}
-                        {lastName ? lastName.charAt(0).toUpperCase() : ""}
+                
+                <div 
+                    className="relative cursor-pointer"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                    <div className="h-12 w-12 rounded-full bg-purple-200 flex items-center justify-center shadow-lg hover:shadow-xl transition">
+                        <span className="text-white font-bold text-lg">
+                            {username?.charAt(0).toUpperCase()}{lastName?.charAt(0).toUpperCase()}
+                        </span>
                     </div>
+                    
+                    {isMenuOpen && (
+                        <div className="absolute right-0 top-14 w-52 bg-white rounded-lg shadow-lg py-3 z-50 border border-gray-200">
+                            <div className="px-4 py-2 text-sm font-semibold text-gray-800 border-b">
+                                {username} {lastName}
+                            </div>
+                            <button 
+                                onClick={handleLogout}
+                                className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition text-left"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

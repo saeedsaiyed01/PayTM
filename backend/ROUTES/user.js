@@ -239,5 +239,29 @@ router.get("/bulk", async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// Update user details
+router.put("/update-user/:id", async (req, res) => {
+    try {
+        const { username, firstName, lastName } = req.body;
+        const userId = req.params.id;
+
+        // Find and update user
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { username, firstName, lastName },
+            { new: true, runValidators: true } // Returns updated user and runs schema validation
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ message: "User updated successfully", user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+module.exports = router;
 
 module.exports = router;

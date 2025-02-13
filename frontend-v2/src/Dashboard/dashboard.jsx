@@ -1,7 +1,6 @@
 // Main Dashboard Component
 import { BalanceCard } from "./balance";
 import { Layout } from "./layout";
-import { Stats } from "./stats";
 import { TransactionsList } from "./transactionList";
 
 export const HeroDashboard = () => {
@@ -18,14 +17,17 @@ export const HeroDashboard = () => {
     return (
       <Layout >
         <div className=" flex flex-col h-screen  max-w-6xl  mx-auto ">
+
+        <hr className="border-gray-300 my-6 mt-1" />
+
           <BalanceCard 
               balance={dashboardData.balance}
               growth={dashboardData.growth}
           />
-          <Stats 
+          {/* <Stats 
             income={dashboardData.income}
-            expenses={dashboardData.expenses}
-          />
+           
+          /> */}
           <TransactionsList />
         </div>
       </Layout>

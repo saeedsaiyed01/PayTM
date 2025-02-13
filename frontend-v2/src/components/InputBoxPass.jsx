@@ -13,7 +13,7 @@ const InputBoxPass = ({ onChange, placeholder, label, type }) => {
             {label}
             <div className="relative text-black"> {/* Container for input and icon */}
             <input
-    type={isPasswordVisible ? "text" : type}
+  type={isPasswordVisible ? "text" : type || "password"}
     onChange={onChange}
     placeholder={placeholder}
     className="w-full px-3 py-2 border rounded border-gray-300 mt-1 pr-10"
@@ -26,7 +26,7 @@ const InputBoxPass = ({ onChange, placeholder, label, type }) => {
                 </span>
             </div>
         </div>
-    );
+    );  
 };
 
 export default InputBoxPass;

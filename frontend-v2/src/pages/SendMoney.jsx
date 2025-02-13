@@ -1,63 +1,17 @@
 import axios from "axios";
-import { motion } from "framer-motion";
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { BottomWarning } from '../components/BottomWar';
-import PinInput from '../components/PinInput';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { AppBar } from "../components/Appbar";
+import { BottomWarning } from "../components/BottomWar";
+import { Checkmark } from "../components/motion";
+import PinInput from "../components/PinInput";
 
-const API_URL = "http://localhost:3000";
-
-const draw = {
-    hidden: { pathLength: 0, opacity: 0 },
-    visible: (i) => ({
-        pathLength: 1,
-        opacity: 1,
-        transition: {
-            pathLength: {
-                delay: i * 0.2,
-                type: "spring",
-                duration: 1.5,
-                bounce: 0.2,
-                ease: "easeInOut",
-            },
-            opacity: { delay: i * 0.2, duration: 0.2 },
-        },
-    }),
-};
-
-function Checkmark({ size = 100, strokeWidth = 2, color = "green", className = "" }) {
-    return (
-        <motion.svg
-            width={size}
-            height={size}
-            viewBox="0 0 100 100"
-            initial="hidden"
-            animate="visible"
-            className={className}
-        >
-            <motion.circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke={color}
-                variants={draw}
-                custom={0}
-                style={{ strokeWidth, strokeLinecap: "round", fill: "transparent" }}
-            />
-            <motion.path
-                d="M30 50L45 65L70 35"
-                stroke={color}
-                variants={draw}
-                custom={1}
-                style={{ strokeWidth, strokeLinecap: "round", strokeLinejoin: "round", fill: "transparent" }}
-            />
-        </motion.svg>
-    );
-}
+const API_URL = "http://localhost:3000"; // Adjust based on your environment
 
 export const SendMoney = () => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
+    const name = searchParams.get("name");
     const [amount, setAmount] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [balance, setBalance] = useState(null);
@@ -78,9 +32,7 @@ export const SendMoney = () => {
     }, []);
 
     const handlePinSubmit = async (pin) => {
-        const parsedAmount = parseFloat(amount);
-    
-        if (!amount || isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > balance) {
+        if (!amount || isNaN(amount) || amount.startsWith('0') || amount > balance) {
             setError('Please enter a valid amount.');
             return;
         }
@@ -88,17 +40,49 @@ export const SendMoney = () => {
         setError('');
     
         try {
-            const response = await axios.post(`${API_URL}/api/v1/user/addBalance`, {
-                amount: parsedAmount,
+            const response = await axios.post(`${API_URL}/api/v1/account/transfer`, {
+                to: id,
+                amount: parseFloat(amount),
                 pin
             }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                headers: { Authorization: "Bearer " + localStorage.getItem("token") }
             });
     
             if (response.status === 200) {
                 setIsSuccess(true);
                 const audio = new Audio('/sounds/payment-successfull-audio.mp3');
                 audio.play();
+                console.log("Sender userId:", localStorage.getItem("userId"));
+
+                // ✅ Debit transaction for the sender
+                await axios.post(`${API_URL}/api/v1/account/transaction`, {
+                    
+                    userId:id,
+                    type: "debit",
+                    name: `Transfer to ${name}`,
+                    date: new Date(),
+                    amount: parseFloat(amount),
+                    category: "Transfer",
+                    status: "completed"
+                }, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                });
+    
+                // ✅ Credit transaction for the recipient
+                await axios.post(`${API_URL}/api/v1/account/transaction`, {
+                    userId: id,  // Recipient's user ID
+                    type: "credit",
+                    name: `Received from ${localStorage.getItem("userName")}`, // Assuming sender name is stored
+                    date: new Date(),
+                    amount: parseFloat(amount),
+                    category: "Transfer",
+                    status: "completed"
+                }, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                });
+    
+                // ✅ Update balance after successful transfer
+                setBalance(prevBalance => prevBalance - amount);
             }
         } catch (error) {
             console.error('Request failed', error);
@@ -106,19 +90,20 @@ export const SendMoney = () => {
         }
     };
     
+
     return (
         <div>
-            <div className="bg-cover bg-center bg-no-repeat h-screen flex justify-center" style={{ backgroundImage: 'url(bg.jpg)' }}>
+            <AppBar />
+            <div className="bg-cover  bg-center bg-no-repeat h-screen flex justify-center" style={{ backgroundImage: 'url(bg.jpg)' }}>
                 <div className="h-full flex flex-col justify-center">
-                    <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-white shadow-lg rounded-lg">
+                    <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-blue-200 shadow-lg rounded-2">
                         <div className="flex flex-col space-y-1.5 p-6">
                             <h2 className="text-3xl font-bold text-center text-black">Send Money</h2>
                         </div>
                         <div className="p-6">
                             <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                                    <span className="text-2xl text-black">test</span>
-                                    {/* // todo {name[0].toUpperCase()}  */}
+                                    <span className="text-2xl text-black">💰</span>
                                 </div>
                                 <h3 className="text-2xl font-semibold text-black">{name}</h3>
                             </div>
@@ -138,9 +123,14 @@ export const SendMoney = () => {
                                 )}
                             </div>
                         </div>
+                        <div className="text-center text-sm text-gray-600">
+                            Your Balance: <span className="font-bold text-black">₹{balance}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
+
+export default SendMoney;
