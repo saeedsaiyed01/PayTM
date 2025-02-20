@@ -15,7 +15,7 @@ export const SendMoney = () => {
     
     const [amount, setAmount] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
-    const [balance, setBalance] = useState(null);
+    const [balance, setBalance] = useState(null);   
     const [error, setError] = useState('');
     const [userId, setUserId] = useState(null);
 
@@ -37,7 +37,7 @@ export const SendMoney = () => {
                 const response = await axios.get(`${API_URL}/api/v1/account/balance`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
-                setBalance(response.data.balance);
+                setBalance(response.data.balance.toFixed(2));
             } catch (error) {
                 console.error('Error fetching balance:', error);
             }
