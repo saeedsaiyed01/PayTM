@@ -7,8 +7,7 @@ import { AppBar } from '../components/Appbar';
 import { BottomWarning } from '../components/BottomWar';
 
 export const Signin = () => {
-  // Use email as the username for sign in
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
   const [captcha, setCaptcha] = useState('');
   const [captchaImage, setCaptchaImage] = useState(null);
@@ -17,7 +16,7 @@ export const Signin = () => {
   const [captchaError, setCaptchaError] = useState('');
   const navigate = useNavigate();
 
-  // Animation variants for the card container
+  // Animation settings
   const containerVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -27,6 +26,7 @@ export const Signin = () => {
     fetchCaptcha();
   }, []);
 
+  // Fetch CAPTCHA
   const fetchCaptcha = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/v1/captcha/captcha', {
@@ -39,25 +39,24 @@ export const Signin = () => {
     }
   };
 
-  // Basic email format validation
-  const isValidEmail = (value) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  // Email validation
+  const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-  // onBlur handlers for inline error messages
   const handleBlurEmail = () => {
-    const trimmed = email.trim();
-    if (!trimmed) {
+    if (!email.trim()) {
       setEmailError('Email is required');
-    } else if (!isValidEmail(trimmed)) {
-      setEmailError('Please enter a valid email address');
+    } else if (!isValidEmail(email.trim())) {
+      setEmailError('Invalid email format');
     } else {
       setEmailError('');
     }
   };
 
   const handleBlurPassword = () => {
-    if (!password) {
+    if (!password.trim()) {
       setPasswordError('Password is required');
+    } else if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
     } else {
       setPasswordError('');
     }
@@ -74,23 +73,23 @@ export const Signin = () => {
   const handleSignIn = async () => {
     const trimmedEmail = email.trim();
     const trimmedCaptcha = captcha.trim();
+    const storedCaptcha = localStorage.getItem('captchaText');
 
-    // Validate fields before submission
     if (!trimmedEmail || !password || !trimmedCaptcha) {
-      if (!trimmedEmail) setEmailError('Email is required');
-      if (!password) setPasswordError('Password is required');
-      if (!trimmedCaptcha) setCaptchaError('CAPTCHA is required');
+      setEmailError(!trimmedEmail ? 'Email is required' : '');
+      setPasswordError(!password ? 'Password is required' : '');
+      setCaptchaError(!trimmedCaptcha ? 'CAPTCHA is required' : '');
       return;
     }
+
     if (!isValidEmail(trimmedEmail)) {
       setEmailError('Please enter a valid email address');
       return;
     }
 
-    const storedCaptcha = localStorage.getItem('captchaText');
     if (trimmedCaptcha !== storedCaptcha) {
       setCaptchaError('CAPTCHA is incorrect');
-      fetchCaptcha(); // Refresh CAPTCHA on error
+      fetchCaptcha();
       return;
     }
 
@@ -110,7 +109,6 @@ export const Signin = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      // Set a generic error message under the password field
       setPasswordError('Sign in failed. Please try again.');
       fetchCaptcha();
     } finally {
@@ -119,23 +117,19 @@ export const Signin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50  to-blue-100">
-      {/* AppBar can be placed at the top */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       <AppBar />
       <div className="flex items-center justify-center h-full">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="w-80 bg-white shadow-xl p-6  m-10 rounded-2xl border border-gray-200"
+          className="w-80 bg-white shadow-xl p-6 m-10 rounded-2xl border border-gray-200"
         >
-          <h2 className="text-blue-600 text-2xl font-bold text-center mb-2">
-            Sign In
-          </h2>
-          <p className="text-gray-500 text-center mb-6">
-            Welcome back! Enter your details.
-          </p>
+          <h2 className="text-blue-600 text-2xl font-bold text-center mb-2">Sign In</h2>
+          <p className="text-gray-500 text-center mb-6">Welcome back! Enter your details.</p>
 
+          {/* Email Input */}
           <input
             type="email"
             placeholder="Email"
@@ -144,10 +138,9 @@ export const Signin = () => {
             onChange={(e) => setEmail(e.target.value)}
             onBlur={handleBlurEmail}
           />
-          {emailError && (
-            <p className="text-red-500 text-xs mb-2">{emailError}</p>
-          )}
+          {emailError && <p className="text-red-500 text-xs mb-2">{emailError}</p>}
 
+          {/* Password Input */}
           <input
             type="password"
             placeholder="Password"
@@ -156,10 +149,9 @@ export const Signin = () => {
             onChange={(e) => setPassword(e.target.value)}
             onBlur={handleBlurPassword}
           />
-          {passwordError && (
-            <p className="text-red-500 text-xs mb-2">{passwordError}</p>
-          )}
+          {passwordError && <p className="text-red-500 text-xs mb-2">{passwordError}</p>}
 
+          {/* CAPTCHA */}
           {captchaImage && (
             <div className="flex justify-center mb-2">
               <img
@@ -178,10 +170,9 @@ export const Signin = () => {
             onChange={(e) => setCaptcha(e.target.value)}
             onBlur={handleBlurCaptcha}
           />
-          {captchaError && (
-            <p className="text-red-500 text-xs mb-2">{captchaError}</p>
-          )}
+          {captchaError && <p className="text-red-500 text-xs mb-2">{captchaError}</p>}
 
+          {/* Sign In Button */}
           <button
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 mt-2 rounded-lg transition duration-300 text-sm"
             onClick={handleSignIn}
@@ -189,10 +180,10 @@ export const Signin = () => {
             Sign In
           </button>
 
+          {/* Sign Up Redirect */}
           <BottomWarning label="Don't have an account?" buttonText="Sign Up" to="/signup" />
         </motion.div>
       </div>
-      {/* Bottom warning can be added at the bottom */}
     </div>
   );
 };

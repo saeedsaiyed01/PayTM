@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-const InputBoxPass = ({ onChange, placeholder, label, type }) => {
+const InputBoxPass = ({ onChange, placeholder, label, type,onBlur }) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const handleTogglePassword = () => {
@@ -15,6 +15,7 @@ const InputBoxPass = ({ onChange, placeholder, label, type }) => {
             <input
   type={isPasswordVisible ? "text" : type || "password"}
     onChange={onChange}
+    onBlur={onBlur}
     placeholder={placeholder}
     className="w-full px-3 py-2 border rounded border-gray-300 mt-1 pr-10"
 />
